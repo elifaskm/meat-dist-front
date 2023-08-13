@@ -1,0 +1,96 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" >
+  <!-- Mask -->
+  <span class="mask bg-gradient-danger opacity-8"></span>
+  <!-- Header container -->
+  <div class="container-fluid d-flex align-items-center">
+
+  </div>
+</div>
+<div class="container-fluid mt--9">
+  <div class="row">
+
+    <div class="col-xl-8 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Registrar entrada</h3>
+            </div>
+            <div class="col-4 text-right">
+              <button type="submit" class="btn btn-sm btn-primary" (click)="postInputsOutputs()">
+                <i _ngcontent-usi-c107="" class="fa fa-save"></i>
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form>
+            <h6 class="heading-small text-muted mb-4">INFORMACION DEL PRODUCTO</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-meat-type">Tipo de carne</label>
+                    <select name="select-meat-type" class="form-control form-control-alternative" (change)="getProductsByMeatType($event.target.value)">
+                      <option *ngFor="let mt of meat_types" class="dropdown-item" [value]="mt.id">{{mt.meat_name}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-product">Producto</label>
+                    <select [(ngModel)] = "input_output.ProductId" (change)="getProductByPk($event.target.value)" name="select-product" class="form-control form-control-alternative">
+                      <option *ngFor="let prod of products" class="dropdown-item" [value]="prod.id">{{prod.description}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-kilograms">Kilos</label>
+                    <input type="number" [(ngModel)] = "input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="input-kilograms" class="form-control form-control-alternative" placeholder="0" value="">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-pieces">Piezas</label>
+                    <input type="number" [(ngModel)] = "input_output.pieces" [disabled]="disabledPieces" name="pieces" id="input-pieces" class="form-control form-control-alternative" placeholder="0" value="">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-boxes">Cajas</label>
+                    <input type="number" [(ngModel)] = "input_output.boxes" [disabled]="disabledBoxes" name="boxes" id="input-boxes" class="form-control form-control-alternative" placeholder="0" value="">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-amount">Monto $</label>
+                    <input type="number" [(ngModel)] = "input_output.amount" name="amount" id="input-amount" class="form-control form-control-alternative" placeholder="0.00" value="">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-date">Fecha</label>
+                    <input type="date" id="input-date" name="date" [(ngModel)] = "dateString" [value]="dateString" class="form-control form-control-alternative" />
+                    <!-- <input type="date" [(ngModel)] = "input_output.date" name="input-date" id="input-date" class="form-control form-control-alternative" placeholder="" value="2023-08-08"> -->
+                  </div>
+                </div>
+                <div class="col-lg-6">
+
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
