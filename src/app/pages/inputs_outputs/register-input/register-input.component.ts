@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HttpService }  from 'src/app/services/http.service';
 import { MeatType } from "src/app/models/meat_type.model";
 import { Product } from "src/app/models/product.model";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-register-input',
@@ -64,10 +65,40 @@ export class RegisterInputComponent implements OnInit {
   }
 
   postInputsOutputs(): void{
+    Swal.fire({
+      html: 'espere...',
+      title: 'Guardando entrada',
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
     this.input_output.date = new Date(this.dateString);
     this._httpService.postInputsOutputs(this.input_output).subscribe((product: Product) => {
-      //this.products = product;
-    })
+      Swal.close();
+
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Entrada registrada',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    },
+    error => {
+
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Error',
+        html: error,
+        showConfirmButton: false,
+        timer: 2000
+      });
+
+    }
+    );
   }
 
   getDate(): string{
