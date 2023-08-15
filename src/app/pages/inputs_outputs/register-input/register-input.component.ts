@@ -14,24 +14,39 @@ export class RegisterInputComponent implements OnInit {
  // @Input() user: any = {};
  public meat_types: MeatType[] = [];
  public products: Product[] = [];
- public input_output: InputsOutputs = {
-  id: null,
-  ProductId: null,
-  kilograms: null,
-  pieces: null,
-  boxes: null,
-  amount: null,
-  date: new Date(),
-  type: "I"
- };
+
  public pageSize: number = 10;
   public pageNum: number = 0;
+
+  public input_output: InputsOutputs = {
+      id: null,
+      ProductId: 0,
+      kilograms: null,
+      pieces: null,
+      boxes: null,
+      amount: null,
+      date: new Date(),
+      type: "I"
+     };
+
   private dcurrent = new Date();
   public dateString = this.dcurrent.getFullYear() + '-' + String(this.dcurrent.getMonth() + 1).padStart(2, '0') + '-' + String(this.dcurrent.getDate()).padStart(2, '0');
+
   public disabledKilograms = false;
   public disabledPieces = false;
   public disabledBoxes = false;
-  //public selectedProduct = 1;
+
+  public noValidAmount = false;
+  public noValidAmountMsg = "";
+  public noValidBoxes = false;
+  public noValidBoxesMsg = "";
+  public noValidPieces = false;
+  public noValidPiecesMsg = "";
+  public noValidKilograms = false;
+  public noValidKilogramsMsg = "";
+  public noValidDate = false;
+  public noValidDateMsg = "";
+
 
   constructor(public _httpService: HttpService) { }
 
@@ -64,7 +79,7 @@ export class RegisterInputComponent implements OnInit {
     })
   }
 
-  postInputsOutputs(): void{
+  postInputsOutputs(f): void{
     Swal.fire({
       html: 'espere...',
       title: 'Guardando entrada',
@@ -74,9 +89,17 @@ export class RegisterInputComponent implements OnInit {
         Swal.showLoading();
       }
     });
+
     this.input_output.date = new Date(this.dateString);
     this._httpService.postInputsOutputs(this.input_output).subscribe((product: Product) => {
       Swal.close();
+
+      //f.reset();
+
+      this.input_output.amount = null;
+      this.input_output.boxes = null;
+      this.input_output.kilograms = null;
+      this.input_output.pieces = null;
 
       Swal.fire({
         position: 'top-end',
@@ -101,8 +124,99 @@ export class RegisterInputComponent implements OnInit {
     );
   }
 
-  getDate(): string{
-    return this.dcurrent.getFullYear() + '-' + String(this.dcurrent.getMonth() + 1).padStart(2, '0') + '-' + String(this.dcurrent.getDate()).padStart(2, '0');
+  onSubmit(f) {
+    //console.log(f);
+    if(f.invalid){
+      this.validatePieces(f);
+      this.validateBoxes(f);
+      this.validateAmount(f);
+      this.validateKilograms(f);
+      this.validateDate(f);
+
+      return false;
+    }
+    this.noValidDate=false;
+    this.noValidKilograms=false;
+    this.noValidPieces = false;
+    this.noValidBoxes = false;
+    this.noValidAmount = false;
+
+    this.postInputsOutputs(f);
+  }
+
+  validateDate(f) {
+    if(f.controls.date.errors && f.controls.date.errors.required){
+      this.noValidDateMsg = "Este campo es requerido";
+      this.noValidDate=true;
+      return;
+    }
+
+    this.noValidDate = false;
+    return;
+  }
+
+  validateKilograms(f) {
+    if(f.controls.kilograms.errors && f.controls.kilograms.errors.required){
+      this.noValidKilogramsMsg = "Este campo es requerido";
+      this.noValidKilograms=true;
+      return;
+    }
+    if(f.controls.pieces.errors && f.controls.pieces.errors.min){
+      this.noValidKilogramsMsg = "El valor debe ser mayor a cero";
+      this.noValidKilograms=true;
+      return;
+    }
+
+    this.noValidKilograms = false;
+    return;
+  }
+
+  validatePieces(f) {
+    if(f.controls.pieces.errors && f.controls.pieces.errors.required){
+      this.noValidPiecesMsg = "Este campo es requerido";
+      this.noValidPieces=true;
+      return;
+    }
+    if(f.controls.pieces.errors && f.controls.pieces.errors.min){
+      this.noValidPiecesMsg = "El valor debe ser mayor a cero";
+      this.noValidPieces=true;
+      return;
+    }
+
+    this.noValidPieces = false;
+    return;
+  }
+
+  validateBoxes(f) {
+    if(f.controls.boxes.errors && f.controls.boxes.errors.required){
+      this.noValidBoxesMsg = "Este campo es requerido";
+      this.noValidBoxes=true;
+      return;
+    }
+    if(f.controls.boxes.errors && f.controls.boxes.errors.min){
+      this.noValidBoxesMsg = "El valor debe ser mayor a cero";
+      this.noValidBoxes=true;
+      return;
+    }
+
+    this.noValidBoxes = false;
+    return;
+  }
+
+  validateAmount(f) {
+    if(f.controls.amount.errors && f.controls.amount.errors.required){
+      this.noValidAmountMsg = "Este campo es requerido";
+      this.noValidAmount=true;
+      return;
+    }
+    if(f.controls.amount.errors && f.controls.amount.errors.min){
+      this.noValidAmountMsg = "El valor debe ser mayor a cero";
+      this.noValidAmount=true;
+      return;
+    }
+
+    this.noValidAmount = false;
+    return;
   }
 
 }

@@ -17,15 +17,16 @@
               <h3 class="mb-0">Registrar entrada</h3>
             </div>
             <div class="col-4 text-right">
-              <button type="submit" class="btn btn-sm btn-primary" (click)="postInputsOutputs()">
+              <!-- <button type="submit" class="btn btn-sm btn-primary" (click)="onSubmit(f)">
                 <i _ngcontent-usi-c107="" class="fa fa-save"></i>
                 Guardar
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
         <div class="card-body">
-          <form>
+
+          <form novalidate (ngSubmit)="onSubmit(f)" #f="ngForm">
             <h6 class="heading-small text-muted mb-4">INFORMACION DEL PRODUCTO</h6>
             <div class="pl-lg-4">
               <div class="row">
@@ -39,8 +40,8 @@
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group">
-                    <label class="form-control-label" for="select-product">Producto</label>
-                    <select [(ngModel)] = "input_output.ProductId" (change)="getProductByPk($event.target.value)" name="select-product" class="form-control form-control-alternative">
+                    <label class="form-control-label" for="product">Producto</label>
+                    <select (change)="getProductByPk($event.target.value)" [(ngModel)]="input_output.ProductId" name="product" id="product" class="form-control form-control-alternative">
                       <option *ngFor="let prod of products" class="dropdown-item" [value]="prod.id">{{prod.description}}</option>
                     </select>
                   </div>
@@ -50,13 +51,19 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-kilograms">Kilos</label>
-                    <input type="number" [(ngModel)] = "input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="input-kilograms" class="form-control form-control-alternative" placeholder="0" value="">
+                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="kilograms" class="form-control form-control-alternative" placeholder="0" value="">
+                    <span *ngIf="noValidKilograms" class="form-text text-danger">
+                      {{noValidKilogramsMsg}}
+                    </span>
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-pieces">Piezas</label>
-                    <input type="number" [(ngModel)] = "input_output.pieces" [disabled]="disabledPieces" name="pieces" id="input-pieces" class="form-control form-control-alternative" placeholder="0" value="">
+                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.pieces" [disabled]="disabledPieces" name="pieces" id="input-pieces" class="form-control form-control-alternative" placeholder="0" value="">
+                    <span *ngIf="noValidPieces" class="form-text text-danger">
+                      {{noValidPiecesMsg}}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -64,13 +71,19 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-boxes">Cajas</label>
-                    <input type="number" [(ngModel)] = "input_output.boxes" [disabled]="disabledBoxes" name="boxes" id="input-boxes" class="form-control form-control-alternative" placeholder="0" value="">
+                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.boxes" [disabled]="disabledBoxes" name="boxes" id="boxes" class="form-control form-control-alternative" placeholder="0" value="">
+                    <span *ngIf="noValidBoxes" class="form-text text-danger">
+                      {{noValidBoxesMsg}}
+                    </span>
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-amount">Monto $</label>
-                    <input type="number" [(ngModel)] = "input_output.amount" name="amount" id="input-amount" class="form-control form-control-alternative" placeholder="0.00" value="">
+                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.amount" name="amount" id="amount"  class="form-control form-control-alternative" placeholder="0.00" value="">
+                    <span *ngIf="noValidAmount" class="form-text text-danger">
+                      {{noValidAmountMsg}}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -78,12 +91,18 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-date">Fecha</label>
-                    <input type="date" id="input-date" name="date" [(ngModel)] = "dateString" [value]="dateString" class="form-control form-control-alternative" />
-                    <!-- <input type="date" [(ngModel)] = "input_output.date" name="input-date" id="input-date" class="form-control form-control-alternative" placeholder="" value="2023-08-08"> -->
+                    <input type="date" required="required" id="date" name="date" [(ngModel)]="dateString" [value]="dateString" class="form-control form-control-alternative" />
+                    <span *ngIf="noValidDate" class="form-text text-danger">
+                      {{noValidDateMsg}}
+                    </span>
                   </div>
                 </div>
-                <div class="col-lg-6">
-
+                <div class="col-lg-6 text-right">
+                  <br><br>
+                  <button type="submit" class="btn btn-sm btn-primary" >
+                    <i _ngcontent-usi-c107="" class="fa fa-save"></i>
+                    Guardar
+                  </button>
                 </div>
               </div>
             </div>
@@ -93,4 +112,5 @@
     </div>
   </div>
 </div>
+
 
