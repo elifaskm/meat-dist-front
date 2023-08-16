@@ -21,8 +21,26 @@ export class HttpService{
       return this._http.get<User>(this.baseUrl + "/user/" + username);
   }
 
-  public getInputsOutputs(pagesize: number, pagenum: number){
-    return this._http.get<InputsOutputs[]>(this.baseUrl + "/inputsoutputs?pageSize=" + pagesize + "&pageNum=" + pagenum);
+  public getInputsOutputs(filterParams: any){
+    //pagesize: number, pagenum: number, movType: string, meatType: number, productId: number, iniDate: string, finDate: string
+    let strParams = "pageSize=" + filterParams.pageSize + "&pageNum=" + filterParams.pageNum;
+    if(filterParams.movType){
+      strParams += "&movType="+filterParams.movType;
+    }
+    if(filterParams.meatType > 0){
+      strParams += "&meatType="+filterParams.meatType;
+    }
+    if(filterParams.productId > 0){
+      strParams += "&productId="+filterParams.productId;
+    }
+    if(filterParams.iniDate){
+      strParams += "&iniDate="+filterParams.iniDate.replaceAll("-", "");
+    }
+    if(filterParams.finDate){
+      strParams += "&finDate="+filterParams.finDate.replaceAll("-", "");
+    }
+
+    return this._http.get<InputsOutputs[]>(this.baseUrl + "/inputsoutputs?" + strParams);
   }
 
   public postInputsOutputs(body: any){
