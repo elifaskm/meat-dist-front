@@ -14,7 +14,7 @@ export class InputsOutputsComponent implements OnInit {
   public products: Product[] = [];
   public inputsOutputs: InputsOutputs[];
   public filterParams:any = {
-    pageSize: 50,
+    pageSize: 20,
     pageNum: 0,
     movType: null,
     meatType: null,
@@ -24,6 +24,9 @@ export class InputsOutputsComponent implements OnInit {
   }
 
   public visibleFilters = false;
+  private pagesLength: number = 0;
+  public pages: number[] = [];
+  public currentPage: number = 1;
 
   constructor(public _httpService: HttpService) { }
 
@@ -44,10 +47,20 @@ export class InputsOutputsComponent implements OnInit {
     this.findInputsOutputs();
   }
 
-  findInputsOutputs(){
+  findInputsOutputs(getTotalRows: boolean = true){
     this._httpService.getInputsOutputs(this.filterParams).subscribe((inputsOutputs: InputsOutputs[]) => {
       this.inputsOutputs = inputsOutputs;
     });
+
+    if(getTotalRows){
+      this._httpService.getInputsOutputs(this.filterParams, true).subscribe((data: any[]) => {
+        this.pagesLength = Math.ceil((data[0].TotalRows / this.filterParams.pageSize));
+        for(let i = 0; i<this.pagesLength; i++){
+          this.pages.push(i+1);
+        }
+      });
+    }
+
   }
 
   getProductsByMeatType(meat_typeId: number): void{
@@ -84,6 +97,48 @@ export class InputsOutputsComponent implements OnInit {
     this.filterParams.finDate = f.value.dateFin;
 
     this.findInputsOutputs();
+  }
+
+  pageClass(numPage:number){
+    if(numPage==this.currentPage){
+      return "page-item active";
+    }else{
+      return "page-item";
+    }
+  }
+
+  changePage(pageNum){
+    this.filterParams.pageNum = pageNum - 1;
+    this.findInputsOutputs(false);
+    this.currentPage = pageNum;
+  }
+
+  nextPage(){
+    this.filterParams.pageNum += 1;
+    this.findInputsOutputs(false);
+    this.currentPage += 1;
+  }
+
+  previousPage(){
+    this.filterParams.pageNum -= 1;
+    this.findInputsOutputs(false);
+    this.currentPage -= 1;
+  }
+
+  nextPageClass(){
+    if(this.pagesLength==this.currentPage){
+      return "page-item disabled";
+    }else{
+      return "page-item";
+    }
+  }
+
+  previousPageClass(){
+    if(this.currentPage==1){
+      return "page-item disabled";
+    }else{
+      return "page-item";
+    }
   }
 
 }

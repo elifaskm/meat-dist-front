@@ -21,7 +21,7 @@ export class HttpService{
       return this._http.get<User>(this.baseUrl + "/user/" + username);
   }
 
-  public getInputsOutputs(filterParams: any){
+  public getInputsOutputs(filterParams: any, totalRowsOnly: boolean = false){
     //pagesize: number, pagenum: number, movType: string, meatType: number, productId: number, iniDate: string, finDate: string
     let strParams = "pageSize=" + filterParams.pageSize + "&pageNum=" + filterParams.pageNum;
     if(filterParams.movType){
@@ -38,6 +38,9 @@ export class HttpService{
     }
     if(filterParams.finDate){
       strParams += "&finDate="+filterParams.finDate.replaceAll("-", "");
+    }
+    if(totalRowsOnly){
+      strParams += "&totalRowsOnly="+totalRowsOnly;
     }
 
     return this._http.get<InputsOutputs[]>(this.baseUrl + "/inputsoutputs?" + strParams);
