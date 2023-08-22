@@ -14,7 +14,7 @@
         <div class="card-header bg-white border-0">
           <div class="row align-items-center">
             <div class="col-8">
-              <h3 class="mb-0">Registrar entrada</h3>
+              <h3 class="mb-0">Registrar salida</h3>
             </div>
             <div class="col-4 text-right">
               <a class="btn btn-sm btn-outline-secondary" routerLinkActive="active" [routerLink]="['/inputs_outputs']">
@@ -51,7 +51,7 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-kilograms">Kilos</label>
-                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="kilograms" class="form-control form-control-alternative" placeholder="0" value="">
+                    <input type="number" required="required" min="0.1" (ngModel)="input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="kilograms" class="form-control form-control-alternative" placeholder="0" value="">
                     <span *ngIf="noValidKilograms" class="form-text text-danger">
                       {{noValidKilogramsMsg}}
                     </span>

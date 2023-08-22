@@ -16,7 +16,7 @@
               <a routerLinkActive="active" [routerLink]="['/register-input']" class="btn btn-sm bg-success">
                 Registrar entrada
               </a>
-              <a routerLinkActive="active" [routerLink]="['/register-input']" class="btn btn-sm bg-warning">
+              <a routerLinkActive="active" [routerLink]="['/register-output']" class="btn btn-sm bg-warning">
                 Registrar salida
               </a>
             </div>
@@ -134,7 +134,7 @@
                   {{io.amount | currency}}
                 </td>
                 <td>
-                  {{io.date | date : 'dd/MM/yyyy'}}
+                  {{io.date | date : 'dd/MM/yyyy':'GMT'}}
                 </td>
                 <td class="text-right">
                   <div ngbDropdown placement="bottom-right">

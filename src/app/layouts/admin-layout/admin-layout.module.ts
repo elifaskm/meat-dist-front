@@ -13,6 +13,7 @@ import { UserProfileComponent } from '../../pages/user-profile/user-profile.comp
 import { TablesComponent } from '../../pages/tables/tables.component';
 import { InputsOutputsComponent } from '../../pages/inputs_outputs/inputs_outputs.component';
 import { RegisterInputComponent } from '../../pages/inputs_outputs/register-input/register-input.component';
+import { RegisterOutputComponent } from '../../pages/inputs_outputs/register-output/register-output.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // import { ToastrModule } from 'ngx-toastr';
 
@@ -32,7 +33,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     IconsComponent,
     MapsComponent,
     InputsOutputsComponent,
-    RegisterInputComponent
+    RegisterInputComponent,
+    RegisterOutputComponent
   ]
 })
 
