@@ -8,6 +8,8 @@ import { TablesComponent } from '../../pages/tables/tables.component';
 import { InputsOutputsComponent } from '../../pages/inputs_outputs/inputs_outputs.component';
 import { RegisterInputComponent } from '../../pages/inputs_outputs/register-input/register-input.component';
 import { RegisterOutputComponent } from '../../pages/inputs_outputs/register-output/register-output.component';
+import { ReportesComponent } from '../../pages/reportes/reportes.component';
+import { TotalsByProductComponent } from '../../pages/reportes/totals-by-product/totals-by-product.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent },
@@ -18,4 +20,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'maps',           component: MapsComponent },
     { path: 'register-input',      component: RegisterInputComponent },
     { path: 'register-output',      component: RegisterOutputComponent },
+    { path: 'reportes',      component: ReportesComponent },
+    { path: 'totals-by-product',      component: TotalsByProductComponent },
 ];
