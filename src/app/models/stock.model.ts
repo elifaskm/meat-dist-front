@@ -7,4 +7,5 @@ export interface Stock{
   total_pieces: number;
   total_boxes: number;
   branch_name: string;
+  amount: number;
 }
