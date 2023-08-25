@@ -93,15 +93,15 @@ export class TotalsByProductComponent implements OnInit {
         icon: 'warning',
         title: 'No hay registros para exportar',
         showConfirmButton: false,
-        timer: 2000
+        timer: 1500
       });
 
       return false;
     }
     let texto: string = `Tipo de carne: ${this.meat_types.find(x=>x.id==this.filterParams.meatType).meat_name}, Tipo de producto: ${this.products.find(x=>x.id==this.filterParams.productId).description}, Almacén: ${this.branches.find(X=>X.id==this.filterParams.branchId).name}`;
-    const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
+    const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'letter'} );
     doc.text(texto,20,20);
-    doc.table(20, 30, this.generateData(), this.headers, { autoSize: true });
+    doc.table(20, 30, this.generateData(), this.headers, { autoSize: false });
     doc.save("totales_por_producto_almacen.pdf");
   }
 
@@ -115,7 +115,7 @@ export class TotalsByProductComponent implements OnInit {
       TOTAL_CAJAS: 0,
       MONTO: ""
     };
-    // Format the price above to USD using the locale, style, and currency.
+
     let MXpesos = new Intl.NumberFormat('es-MX', {
       style: 'currency',
       currency: 'MXN',
@@ -138,12 +138,13 @@ export class TotalsByProductComponent implements OnInit {
   createHeaders(keys) {
     var result = [];
     for (var i = 0; i < keys.length; i += 1) {
+
       result.push({
-        id: keys[i],
-        name: keys[i],
-        prompt: keys[i],
-        width: 65,
-        align: "center",
+        id: keys[i].n,
+        name: keys[i].n,
+        prompt: keys[i].n,
+        width: keys[i].w,
+        align: keys[i].a,
         padding: 0
       });
     }
@@ -151,12 +152,12 @@ export class TotalsByProductComponent implements OnInit {
   }
 
   public headers = this.createHeaders([
-    "PRODUCTO",
-    "TIPO",
-    "TOTAL_KILOS",
-    "TOTAL_PIEZAS",
-    "TOTAL_CAJAS",
-    "MONTO"
+    {n: "PRODUCTO", w: 50, a: "left"},
+    {n: "TIPO", w: "30", a: "center"},
+    {n: "TOTAL_KILOS", w: "50", a: "center"},
+    {n: "TOTAL_PIEZAS", w: "50", a: "center"},
+    {n: "TOTAL_CAJAS", w: "50", a: "center"},
+    {n: "MONTO", w: "40", a: "right"}
   ]);
 
 }
