@@ -110,9 +110,9 @@ export class TotalsByProductComponent implements OnInit {
     var data = {
       PRODUCTO:"",
       TIPO: "",
-      TOTAL_KILOS: 0,
-      TOTAL_PIEZAS: 0,
-      TOTAL_CAJAS: 0,
+      TOTAL_KILOS: "",
+      TOTAL_PIEZAS: "",
+      TOTAL_CAJAS: "",
       MONTO: ""
     };
 
@@ -122,11 +122,12 @@ export class TotalsByProductComponent implements OnInit {
     });
 
     this.stocks.forEach((stock, index, array)=>{
+      console.log(stock);
       data.PRODUCTO = stock.description;
       data.TIPO = stock.meat_name;
-      data.TOTAL_KILOS = stock.total_kilograms;
-      data.TOTAL_PIEZAS = stock.total_pieces;
-      data.TOTAL_CAJAS = stock.total_boxes;
+      data.TOTAL_KILOS = stock.total_kilograms ? stock.total_kilograms.toString() : " ";
+      data.TOTAL_PIEZAS = stock.total_pieces ? stock.total_pieces.toString() : " ";
+      data.TOTAL_CAJAS = stock.total_boxes ? stock.total_boxes.toString() : " ";
       data.MONTO = MXpesos.format(stock.amount);
 
       result.push(Object.assign({}, data));

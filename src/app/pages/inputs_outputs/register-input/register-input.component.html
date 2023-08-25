@@ -97,8 +97,17 @@
                     </span>
                   </div>
                 </div>
-                <div class="col-lg-6 text-right">
-                  <br><br>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="warehouse">Almacén</label>
+                    <select name="warehouse" id="warehouse" [(ngModel)]="input_output.BranchId" class="form-control form-control-alternative">
+                      <option *ngFor="let branch of branches" class="dropdown-item" [value]="branch.id">{{branch.name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12 text-right">
                   <button type="submit" class="btn btn-sm btn-primary" >
                     <i _ngcontent-usi-c107="" class="fa fa-save"></i>
                     Guardar

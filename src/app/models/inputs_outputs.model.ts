@@ -8,4 +8,5 @@ export interface InputsOutputs{
   amount: number;
   date: Date;
   type: string;
+  BranchId: number;
 }

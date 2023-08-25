@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HttpService }  from 'src/app/services/http.service';
 import { MeatType } from "src/app/models/meat_type.model";
 import { Product } from "src/app/models/product.model";
+import { Branch } from "src/app/models/branch.model";
 import Swal from "sweetalert2";
 
 @Component({
@@ -14,6 +15,7 @@ export class RegisterOutputComponent implements OnInit {
  // @Input() user: any = {};
  public meat_types: MeatType[] = [];
  public products: Product[] = [];
+ public branches: Branch[] = [];
 
  public pageSize: number = 10;
   public pageNum: number = 0;
@@ -26,7 +28,8 @@ export class RegisterOutputComponent implements OnInit {
       boxes: null,
       amount: null,
       date: new Date(),
-      type: "O"
+      type: "O",
+      BranchId: 0
      };
 
   private dcurrent = new Date();
@@ -55,6 +58,11 @@ export class RegisterOutputComponent implements OnInit {
     this._httpService.getMeatTypes(this.pageSize, this.pageNum).subscribe((meat_types: MeatType[]) => {
       this.meat_types = meat_types;
       this.getProductsByMeatType(this.meat_types[0].id);
+    });
+
+    this._httpService.getAllWarehouse().subscribe((branches: Branch[]) => {
+      this.input_output.BranchId = branches[0].id;
+      this.branches = branches;
     });
 
   }
@@ -100,6 +108,7 @@ export class RegisterOutputComponent implements OnInit {
       this.input_output.boxes = null;
       this.input_output.kilograms = null;
       this.input_output.pieces = null;
+      this.input_output.BranchId = 0;
 
       Swal.fire({
         position: 'top-end',
