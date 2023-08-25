@@ -4,6 +4,8 @@ import { Stock } from "src/app/models/stock.model";
 import { MeatType } from "src/app/models/meat_type.model";
 import { Product } from "src/app/models/product.model";
 import { Branch } from "src/app/models/branch.model";
+import { jsPDF } from "jspdf";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-totals-by-product',
@@ -13,7 +15,7 @@ import { Branch } from "src/app/models/branch.model";
 export class TotalsByProductComponent implements OnInit {
   public meat_types: MeatType[] = [];
   public products: Product[] = [];
-  public stocks: Stock[];
+  public stocks: Stock[] = [];
   public branches: Branch[];
 
   public filterParams:any = {
@@ -83,5 +85,78 @@ export class TotalsByProductComponent implements OnInit {
 
     this.findStock();
   }
+
+  exportToPDF(){
+    if(this.stocks.length==0){
+      Swal.fire({
+        position: 'top-end',
+        icon: 'warning',
+        title: 'No hay registros para exportar',
+        showConfirmButton: false,
+        timer: 2000
+      });
+
+      return false;
+    }
+    let texto: string = `Tipo de carne: ${this.meat_types.find(x=>x.id==this.filterParams.meatType).meat_name}, Tipo de producto: ${this.products.find(x=>x.id==this.filterParams.productId).description}, Almacén: ${this.branches.find(X=>X.id==this.filterParams.branchId).name}`;
+    const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
+    doc.text(texto,20,20);
+    doc.table(20, 30, this.generateData(), this.headers, { autoSize: true });
+    doc.save("totales_por_producto_almacen.pdf");
+  }
+
+  generateData() {
+    let result = [];
+    var data = {
+      PRODUCTO:"",
+      TIPO: "",
+      TOTAL_KILOS: 0,
+      TOTAL_PIEZAS: 0,
+      TOTAL_CAJAS: 0,
+      MONTO: ""
+    };
+    // Format the price above to USD using the locale, style, and currency.
+    let MXpesos = new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+    });
+
+    this.stocks.forEach((stock, index, array)=>{
+      data.PRODUCTO = stock.description;
+      data.TIPO = stock.meat_name;
+      data.TOTAL_KILOS = stock.total_kilograms;
+      data.TOTAL_PIEZAS = stock.total_pieces;
+      data.TOTAL_CAJAS = stock.total_boxes;
+      data.MONTO = MXpesos.format(stock.amount);
+
+      result.push(Object.assign({}, data));
+    });
+
+    return result;
+  };
+
+  createHeaders(keys) {
+    var result = [];
+    for (var i = 0; i < keys.length; i += 1) {
+      result.push({
+        id: keys[i],
+        name: keys[i],
+        prompt: keys[i],
+        width: 65,
+        align: "center",
+        padding: 0
+      });
+    }
+    return result;
+  }
+
+  public headers = this.createHeaders([
+    "PRODUCTO",
+    "TIPO",
+    "TOTAL_KILOS",
+    "TOTAL_PIEZAS",
+    "TOTAL_CAJAS",
+    "MONTO"
+  ]);
 
 }
