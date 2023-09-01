@@ -6,7 +6,8 @@ import { MeatType } from "../models/meat_type.model";
 import { environment } from "src/environments/environment";
 import { Product } from '../models/product.model';
 import { Stock } from "../models/stock.model";
-import { Branch } from "../models/branch.model";
+import { Branch } from '../models/branch.model';
+import { RepByDate } from '../models/rep_by_date';
 
 @Injectable({
   providedIn: "root"
@@ -81,5 +82,26 @@ export class HttpService{
 
   public getAllWarehouse(){
     return this._http.get<Branch[]>(this.baseUrl + "/branch/iswarehouse/Y");
+  }
+
+  public getRepByDate(filterParams: any){
+    let strParams = "";
+    if(filterParams.branchId){
+      strParams += "&branchId="+filterParams.branchId;
+    }
+    if(filterParams.meatType){
+      strParams += "&meatTypeId="+filterParams.meatType;
+    }
+    if(filterParams.productId){
+      strParams += "&productId="+filterParams.productId;
+    }
+    if(filterParams.iniDate){
+      strParams += "&iniDate="+filterParams.iniDate.replaceAll("-", "");
+    }
+    if(filterParams.finDate){
+      strParams += "&finDate="+filterParams.finDate.replaceAll("-", "");
+    }
+
+    return this._http.get<RepByDate[]>(this.baseUrl + "/inputsoutputs/report/bydaterange?" + strParams);
   }
 }

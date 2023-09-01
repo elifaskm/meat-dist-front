@@ -26,10 +26,10 @@
               </button>
             </div>
             <div class="col-lg-4 col-md-6">
-              <button type="button" placement="top-center" triggers="hover focus click" ngbTooltip="{{copy === 'calendar-grid-58' ? 'Copied':'Copy to clipboard'}}"  class="btn-icon-clipboard" ngxClipboard [cbContent]="'calendar-grid-58'" (cbOnSuccess) = "copy = 'calendar-grid-58'">
+              <button type="button" [routerLink]="['/totals-by-date']" placement="top-center" triggers="hover focus click" ngbTooltip="{{copy === 'calendar-grid-58' ? 'Copied':'Copy to clipboard'}}"  class="btn-icon-clipboard" ngxClipboard [cbContent]="'calendar-grid-58'" (cbOnSuccess) = "copy = 'calendar-grid-58'">
                 <div>
                   <i class="ni ni-calendar-grid-58"></i>
-                  <span>Total de entradas y salidas por fecha</span>
+                  <span>Entradas y salidas por fecha en almacén</span>
                 </div>
               </button>
             </div>

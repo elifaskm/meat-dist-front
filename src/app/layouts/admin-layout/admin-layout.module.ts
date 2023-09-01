@@ -16,6 +16,7 @@ import { RegisterInputComponent } from '../../pages/inputs_outputs/register-inpu
 import { RegisterOutputComponent } from '../../pages/inputs_outputs/register-output/register-output.component';
 import { ReportesComponent } from '../../pages/reportes/reportes.component';
 import { TotalsByProductComponent } from '../../pages/reportes/totals-by-product/totals-by-product.component';
+import { TotalsByDateComponent } from '../../pages/reportes/totals-by-date/totals-by-date.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // import { ToastrModule } from 'ngx-toastr';
 
@@ -38,7 +39,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     RegisterInputComponent,
     RegisterOutputComponent,
     ReportesComponent,
-    TotalsByProductComponent
+    TotalsByProductComponent,
+    TotalsByDateComponent
   ]
 })
 

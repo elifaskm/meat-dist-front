@@ -10,6 +10,7 @@ import { RegisterInputComponent } from '../../pages/inputs_outputs/register-inpu
 import { RegisterOutputComponent } from '../../pages/inputs_outputs/register-output/register-output.component';
 import { ReportesComponent } from '../../pages/reportes/reportes.component';
 import { TotalsByProductComponent } from '../../pages/reportes/totals-by-product/totals-by-product.component';
+import { TotalsByDateComponent } from '../../pages/reportes/totals-by-date/totals-by-date.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent },
@@ -22,4 +23,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'register-output',      component: RegisterOutputComponent },
     { path: 'reportes',      component: ReportesComponent },
     { path: 'totals-by-product',      component: TotalsByProductComponent },
+    { path: 'totals-by-date',      component: TotalsByDateComponent }
 ];
