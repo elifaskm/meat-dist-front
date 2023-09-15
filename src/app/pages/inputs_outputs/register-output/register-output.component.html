@@ -51,7 +51,7 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-kilograms">Kilos</label>
-                    <input type="number" required="required" min="0.1" (ngModel)="input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="kilograms" class="form-control form-control-alternative" placeholder="0" value="">
+                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="kilograms" class="form-control form-control-alternative" placeholder="0" value="">
                     <span *ngIf="noValidKilograms" class="form-text text-danger">
                       {{noValidKilogramsMsg}}
                     </span>

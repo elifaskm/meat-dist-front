@@ -12,7 +12,7 @@ import Swal from "sweetalert2";
   styleUrls: ['./register-output.component.scss']
 })
 export class RegisterOutputComponent implements OnInit {
- // @Input() user: any = {};
+
  public meat_types: MeatType[] = [];
  public products: Product[] = [];
  public branches: Branch[] = [];
@@ -75,7 +75,7 @@ export class RegisterOutputComponent implements OnInit {
       this.disabledPieces = !(products[0].by_pieces=="Y");
       this.disabledBoxes = !(products[0].by_boxes=="Y");
 
-      this.products = products;
+      this.products = products.sort((a, b) => (a.description > b.description) ? 1 : -1);
     })
   }
 
@@ -102,13 +102,10 @@ export class RegisterOutputComponent implements OnInit {
     this._httpService.postInputsOutputs(this.input_output).subscribe((product: Product) => {
       Swal.close();
 
-      //f.reset();
-
       this.input_output.amount = null;
       this.input_output.boxes = null;
       this.input_output.kilograms = null;
       this.input_output.pieces = null;
-      this.input_output.BranchId = 0;
 
       Swal.fire({
         position: 'top-end',
@@ -122,7 +119,7 @@ export class RegisterOutputComponent implements OnInit {
 
       Swal.fire({
         position: 'top-end',
-        icon: 'success',
+        icon: 'error',
         title: 'Error',
         html: error,
         showConfirmButton: false,
@@ -134,7 +131,7 @@ export class RegisterOutputComponent implements OnInit {
   }
 
   onSubmit(f) {
-    //console.log(f);
+
     if(f.invalid){
       this.validatePieces(f);
       this.validateBoxes(f);

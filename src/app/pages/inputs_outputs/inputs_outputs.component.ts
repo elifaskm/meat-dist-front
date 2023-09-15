@@ -3,6 +3,7 @@ import { HttpService }  from 'src/app/services/http.service';
 import { InputsOutputs } from "src/app/models/inputs_outputs.model";
 import { MeatType } from "src/app/models/meat_type.model";
 import { Product } from "src/app/models/product.model";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-inputs-outputs',
@@ -139,6 +140,55 @@ export class InputsOutputsComponent implements OnInit {
     }else{
       return "page-item";
     }
+  }
+
+  deleteInputOutput(id:number): void{
+    Swal.fire({
+      html: 'espere...',
+      title: 'Eliminando registro',
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    this._httpService.deleteInputOutput(id).subscribe((resp: boolean) => {
+      Swal.close();
+
+      if(resp){
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Registro eliminado',
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+        this.inputsOutputs = this.inputsOutputs.filter(e=>e.id!==id);
+      }else{
+        Swal.fire({
+          position: 'top-end',
+          icon: 'error',
+          title: 'Error',
+          html: "Error al eliminar registro",
+          showConfirmButton: false,
+          timer: 2000
+        });
+      }
+    },
+    error => {
+
+      Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: 'Error',
+        html: error,
+        showConfirmButton: false,
+        timer: 2000
+      });
+
+    });
   }
 
 }

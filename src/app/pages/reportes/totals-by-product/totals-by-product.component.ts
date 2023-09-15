@@ -69,15 +69,13 @@ export class TotalsByProductComponent implements OnInit {
         meat_typeId: 0
       });
 
+      products.sort((a, b) => (a.description > b.description) ? 1 : -1);
+
       this.products = itemAll.concat(products);
     })
   }
 
   onSubmit(f) {
-     console.log(f.value);
-    // if(f.invalid){
-    //   return false;
-    // }
 
     this.filterParams.meatType = f.value.meatType;
     this.filterParams.productId = f.value.product;
@@ -121,8 +119,9 @@ export class TotalsByProductComponent implements OnInit {
       currency: 'MXN',
     });
 
+    let totalAmount: number = 0;
     this.stocks.forEach((stock, index, array)=>{
-      console.log(stock);
+
       data.PRODUCTO = stock.description;
       data.TIPO = stock.meat_name;
       data.TOTAL_KILOS = stock.total_kilograms ? stock.total_kilograms.toString() : " ";
@@ -130,8 +129,26 @@ export class TotalsByProductComponent implements OnInit {
       data.TOTAL_CAJAS = stock.total_boxes ? stock.total_boxes.toString() : " ";
       data.MONTO = MXpesos.format(stock.amount);
 
+      totalAmount = Number(totalAmount) + Number(stock.amount);
+
       result.push(Object.assign({}, data));
     });
+
+    data.PRODUCTO = "";
+    data.TIPO = "";
+    data.TOTAL_KILOS = "";
+    data.TOTAL_PIEZAS = "";
+    data.TOTAL_CAJAS = "";
+    data.MONTO = "";
+    result.push(Object.assign({}, data));
+
+    data.PRODUCTO = "TOTAL";
+    data.TIPO = "====";
+    data.TOTAL_KILOS = "====";
+    data.TOTAL_PIEZAS = "====";
+    data.TOTAL_CAJAS = "====";
+    data.MONTO = MXpesos.format(totalAmount);
+    result.push(Object.assign({}, data));
 
     return result;
   };
@@ -160,5 +177,14 @@ export class TotalsByProductComponent implements OnInit {
     {n: "TOTAL_CAJAS", w: "50", a: "center"},
     {n: "MONTO", w: "40", a: "right"}
   ]);
+
+  getTotal():number{
+
+    const sum = this.stocks.reduce((accumulator, value) => {
+      return Number(accumulator) + Number(value.amount);
+    }, 0);
+
+    return sum;
+  }
 
 }

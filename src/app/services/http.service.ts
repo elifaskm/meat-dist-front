@@ -104,4 +104,9 @@ export class HttpService{
 
     return this._http.get<RepByDate[]>(this.baseUrl + "/inputsoutputs/report/bydaterange?" + strParams);
   }
+
+  public deleteInputOutput(id: number){
+    return this._http.delete(this.baseUrl + "/inputsoutputs/" + id);
+  }
+
 }

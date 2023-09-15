@@ -94,6 +94,20 @@
                 <th scope="col">MONTO</th>
               </tr>
             </thead>
+            <tfoot>
+              <tr class="bg-gray">
+                <td colspan="5" class="text-white"><b>Total</b></td>
+                <td class="text-white">
+                  <span class="badge badge-dot text-success">
+                    <i class="fas fa-arrow-up"></i>
+                  </span>
+                  <b>{{getTotalInput() | currency}} | {{getTotalOutput() | currency}} </b>
+                  <span class="badge badge-dot text-warning">
+                    <i class="fas fa-arrow-down"></i>
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
             <tbody>
               <tr *ngFor="let data of repByDateData">
                 <td>

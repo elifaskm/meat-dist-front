@@ -75,6 +75,12 @@
                 <th scope="col">MONTO</th>
               </tr>
             </thead>
+            <tfoot>
+              <tr class="bg-gray">
+                <td colspan="5" class="text-white"><b>Total</b></td>
+                <td class="text-white"><b>{{getTotal() | currency}}</b></td>
+              </tr>
+            </tfoot>
             <tbody>
               <tr *ngFor="let stock of stocks">
                 <td>

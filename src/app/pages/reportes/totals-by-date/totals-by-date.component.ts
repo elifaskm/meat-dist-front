@@ -79,6 +79,8 @@ export class TotalsByDateComponent implements OnInit {
         meat_typeId: 0
       });
 
+      products.sort((a, b) => (a.description > b.description) ? 1 : -1);
+
       this.products = itemAll.concat(products);
     })
   }
@@ -112,8 +114,8 @@ export class TotalsByDateComponent implements OnInit {
     let texto: string = `Tipo de carne: ${this.meat_types.find(x=>x.id==this.filterParams.meatType).meat_name}, Tipo de producto: ${this.products.find(x=>x.id==this.filterParams.productId).description}, Almacén: ${this.branches.find(X=>X.id==this.filterParams.branchId).name},
     Fecha inicial: ${this.dateStringIni}, Fecha final: ${this.dateStringFin}`;
     const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape", format: 'letter'} );
-    doc.text(texto,20,20);
-    doc.table(20, 30, this.generateData(), this.headers, { autoSize: false });
+    doc.text(texto,10,20);
+    doc.table(10, 30, this.generateData(), this.headers, { autoSize: false });
     doc.save("totales_por_producto_almacen.pdf");
   }
 
@@ -132,6 +134,9 @@ export class TotalsByDateComponent implements OnInit {
       style: 'currency',
       currency: 'MXN',
     });
+
+    let totalAmountInput: number = 0;
+    let totalAmountOutput: number = 0;
 
     this.repByDateData.forEach((item, index, array)=>{
       data.PRODUCTO = item.Product;
@@ -155,10 +160,29 @@ export class TotalsByDateComponent implements OnInit {
         data.CAJAS = " ";
       }
 
-      data.MONTO = MXpesos.format(item.AmountInput);
+      data.MONTO = "(E) " + MXpesos.format(item.AmountInput) + " | " + MXpesos.format(item.AmountOutput) + " (S)";
+
+      totalAmountInput = Number(totalAmountInput) + Number(item.AmountInput);
+      totalAmountOutput = Number(totalAmountOutput) + Number(item.AmountOutput);
 
       result.push(Object.assign({}, data));
     });
+
+    data.PRODUCTO = "";
+    data.TIPO = "";
+    data.KILOS = "";
+    data.PIEZAS = "";
+    data.CAJAS = "";
+    data.MONTO = "";
+    result.push(Object.assign({}, data));
+
+    data.PRODUCTO = "TOTAL";
+    data.TIPO = "====";
+    data.KILOS = "====";
+    data.PIEZAS = "====";
+    data.CAJAS = "====";
+    data.MONTO = "(E) " + MXpesos.format(totalAmountInput) + " | " + MXpesos.format(totalAmountOutput) + " (S)";
+    result.push(Object.assign({}, data));
 
     return result;
   };
@@ -185,7 +209,25 @@ export class TotalsByDateComponent implements OnInit {
     {n: "KILOS", w: "60", a: "center"},
     {n: "PIEZAS", w: "60", a: "center"},
     {n: "CAJAS", w: "60", a: "center"},
-    {n: "MONTO", w: "40", a: "right"}
+    {n: "MONTO", w: "80", a: "center"}
   ]);
+
+  getTotalInput():number{
+
+    const totalInput = this.repByDateData.reduce((accumulator, value) => {
+      return Number(accumulator) + Number(value.AmountInput);
+    }, 0);
+
+    return totalInput;
+  }
+
+  getTotalOutput():number{
+
+    const totalOutput = this.repByDateData.reduce((accumulator, value) => {
+      return Number(accumulator) + Number(value.AmountOutput);
+    }, 0);
+
+    return totalOutput;
+  }
 
 }
