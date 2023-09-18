@@ -54,6 +54,8 @@ export class InputsOutputsComponent implements OnInit {
     });
 
     if(getTotalRows){
+      this.pagesLength = 0;
+      this.pages = [];
       this._httpService.getInputsOutputs(this.filterParams, true).subscribe((data: any[]) => {
         this.pagesLength = Math.ceil((data[0].TotalRows / this.filterParams.pageSize));
         for(let i = 0; i<this.pagesLength; i++){
