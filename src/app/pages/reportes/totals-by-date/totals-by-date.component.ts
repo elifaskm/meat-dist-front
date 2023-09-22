@@ -76,7 +76,9 @@ export class TotalsByDateComponent implements OnInit {
         by_pieces: "",
         by_boxes: "",
         is_deleted: "selected",
-        meat_typeId: 0
+        meat_typeId: 0,
+        price: 0,
+        calc_by: ""
       });
 
       products.sort((a, b) => (a.description > b.description) ? 1 : -1);

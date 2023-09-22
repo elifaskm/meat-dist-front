@@ -8,6 +8,59 @@
 </div>
 <div class="container-fluid mt--9">
   <div class="row">
+    <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+      <div class="card card-profile shadow">
+        <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+          Datos para calcular monto
+        </div>
+        <div class="card-body pt-0 pt-md-4">
+          <form novalidate (ngSubmit)="onSubmitDataCalc(frmcalc)" #frmcalc="ngForm">
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-amount">Precio del producto $</label>
+                    <input type="number" required="required" min="0.1" [(ngModel)]="product.price" name="price" id="price"  class="form-control form-control-alternative" placeholder="0.00" value="" [disabled]="disabledDataCalc">
+                    <span *ngIf="noValidPrice" class="form-text text-danger">
+                      {{noValidPriceMsg}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-meat-type">Multiplicado por</label>
+                    <select name="select-meat-type" [(ngModel)]="product.calc_by" class="form-control form-control-alternative" [disabled]="disabledDataCalc" >
+                      <option *ngFor="let cb of ListCalcBy" class="dropdown-item" [value]="cb.key">{{cb.value}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row" *ngIf="!changeDataCalc">
+                <div class="col">
+                  <a href="javascript:void(0);" class="dropdown-item" (click)="setChangeDataCalc(true,false)">
+                    <span>Cambiar datos para calcular</span>
+                  </a>
+                </div>
+              </div>
+              <div class="row" *ngIf="changeDataCalc">
+                <div class="col-lg-12 text-right">
+                  <button type="submit" class="btn btn-sm btn-primary" >
+                    <i _ngcontent-usi-c107="" class="fa fa-save"></i>
+                    Guardar cambios
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-outline-secondary" (click)="setChangeDataCalc(false,true)" >
+                    <span aria-hidden="true">&times;</span>
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <div class="col-xl-8 order-xl-1">
       <div class="card bg-secondary shadow">
@@ -51,7 +104,8 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-kilograms">Kilos</label>
-                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="kilograms" class="form-control form-control-alternative" placeholder="0" value="">
+                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.kilograms" [disabled]="disabledKilograms" name="kilograms" id="kilograms" class="form-control form-control-alternative" placeholder="0" value=""
+                    (change)="calculateAmount('K', $event.target.value)">
                     <span *ngIf="noValidKilograms" class="form-text text-danger">
                       {{noValidKilogramsMsg}}
                     </span>
@@ -60,7 +114,8 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-pieces">Piezas</label>
-                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.pieces" [disabled]="disabledPieces" name="pieces" id="input-pieces" class="form-control form-control-alternative" placeholder="0" value="">
+                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.pieces" [disabled]="disabledPieces" name="pieces" id="pieces" class="form-control form-control-alternative" placeholder="0" value=""
+                    (change)="calculateAmount('P', $event.target.value)">
                     <span *ngIf="noValidPieces" class="form-text text-danger">
                       {{noValidPiecesMsg}}
                     </span>
@@ -71,7 +126,8 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="form-control-label" for="input-boxes">Cajas</label>
-                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.boxes" [disabled]="disabledBoxes" name="boxes" id="boxes" class="form-control form-control-alternative" placeholder="0" value="">
+                    <input type="number" required="required" min="0.1" [(ngModel)]="input_output.boxes" [disabled]="disabledBoxes" name="boxes" id="boxes" class="form-control form-control-alternative" placeholder="0" value=""
+                    (change)="calculateAmount('B', $event.target.value)">
                     <span *ngIf="noValidBoxes" class="form-text text-danger">
                       {{noValidBoxesMsg}}
                     </span>

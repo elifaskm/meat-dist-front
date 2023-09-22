@@ -109,4 +109,8 @@ export class HttpService{
     return this._http.delete(this.baseUrl + "/inputsoutputs/" + id);
   }
 
+  public patchProduct(id: number, body: any){
+    return this._http.patch(this.baseUrl + "/product/"+id, body);
+  }
+
 }

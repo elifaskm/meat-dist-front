@@ -1,10 +1,11 @@
 import { InputsOutputs } from 'src/app/models/inputs_outputs.model';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Renderer2, OnInit } from '@angular/core';
 import { HttpService }  from 'src/app/services/http.service';
 import { MeatType } from "src/app/models/meat_type.model";
 import { Product } from "src/app/models/product.model";
 import { Branch } from "src/app/models/branch.model";
 import Swal from "sweetalert2";
+import { listCalcBy } from './../../../models/calc_by.model';
 
 @Component({
   selector: 'app-register-output',
@@ -16,6 +17,19 @@ export class RegisterOutputComponent implements OnInit {
  public meat_types: MeatType[] = [];
  public products: Product[] = [];
  public branches: Branch[] = [];
+
+ public product: Product = {
+  id: 0,
+  meat_typeId: 0,
+  description: "",
+  by_kilograms: "",
+  by_pieces: "",
+  by_boxes: "",
+  is_deleted: "",
+  price: 0,
+  calc_by: "",
+ };
+ public ListCalcBy = listCalcBy;
 
  public pageSize: number = 10;
   public pageNum: number = 0;
@@ -38,6 +52,7 @@ export class RegisterOutputComponent implements OnInit {
   public disabledKilograms = false;
   public disabledPieces = false;
   public disabledBoxes = false;
+  public disabledDataCalc: boolean = true;
 
   public noValidAmount = false;
   public noValidAmountMsg = "";
@@ -49,9 +64,15 @@ export class RegisterOutputComponent implements OnInit {
   public noValidKilogramsMsg = "";
   public noValidDate = false;
   public noValidDateMsg = "";
+  public noValidPrice = false;
+  public noValidPriceMsg = "";
+
+  public changeDataCalc: boolean = false;
+  public previousPrice: number = 0;
+  public previousCalcBy: string = "";
 
 
-  constructor(public _httpService: HttpService) { }
+  constructor(public _httpService: HttpService, private renderer:Renderer2) { }
 
   ngOnInit() {
 
@@ -68,6 +89,7 @@ export class RegisterOutputComponent implements OnInit {
   }
 
   getProductsByMeatType(meat_typeId: number): void{
+    this.clearControls();
     this._httpService.getProductsByMeatType(meat_typeId).subscribe((products: Product[]) => {
       this.input_output.ProductId = products[0].id;
 
@@ -75,15 +97,46 @@ export class RegisterOutputComponent implements OnInit {
       this.disabledPieces = !(products[0].by_pieces=="Y");
       this.disabledBoxes = !(products[0].by_boxes=="Y");
 
+      this.product = products[0];
+      this.cleanErrorMsgs();
+
+
+      if(!this.disabledDataCalc){
+        this.previousCalcBy = products[0].calc_by;
+        this.previousPrice = products[0].price;
+        this.setChangeDataCalc(false,true);
+      }
+
       this.products = products.sort((a, b) => (a.description > b.description) ? 1 : -1);
+      this.setFocus(this.product.by_kilograms, this.product.by_pieces, this.product.by_boxes);
     })
   }
 
+  clearControls(){
+    this.input_output.amount = null;
+    this.input_output.boxes = null;
+    this.input_output.kilograms = null;
+    this.input_output.pieces = null;
+  }
+
   getProductByPk(productId: any): void{
+    this.clearControls();
+
     this._httpService.getProductById(productId).subscribe((product: Product) => {
       this.disabledKilograms = !(product.by_kilograms=="Y");
       this.disabledPieces = !(product.by_pieces=="Y");
       this.disabledBoxes = !(product.by_boxes=="Y");
+
+      this.product = product;
+      this.cleanErrorMsgs();
+
+      if(!this.disabledDataCalc){
+        this.previousCalcBy = product.calc_by;
+        this.previousPrice = product.price;
+        this.setChangeDataCalc(false,true);
+      };
+
+      this.setFocus(product.by_kilograms, product.by_pieces, product.by_boxes);
     })
   }
 
@@ -102,10 +155,7 @@ export class RegisterOutputComponent implements OnInit {
     this._httpService.postInputsOutputs(this.input_output).subscribe((product: Product) => {
       Swal.close();
 
-      this.input_output.amount = null;
-      this.input_output.boxes = null;
-      this.input_output.kilograms = null;
-      this.input_output.pieces = null;
+      this.clearControls();
 
       Swal.fire({
         position: 'top-end',
@@ -223,6 +273,136 @@ export class RegisterOutputComponent implements OnInit {
 
     this.noValidAmount = false;
     return;
+  }
+
+  setChangeDataCalc(changeDataCalc, disabledDataCalc){
+    this.changeDataCalc=changeDataCalc;
+    this.disabledDataCalc=disabledDataCalc;
+    if(changeDataCalc){
+      this.previousPrice = this.product.price;
+      this.previousCalcBy = this.product.calc_by;
+
+      setTimeout(() => {
+        var element = this.renderer.selectRootElement('#price');
+        element.focus();
+      }, 100);
+    }else{
+      this.product.price = this.previousPrice;
+      this.product.calc_by = this.previousCalcBy;
+      this.noValidPrice = false;
+      this.noValidPiecesMsg = "";
+    }
+  }
+
+  saveDataCalc(): void{
+    Swal.fire({
+      html: 'espere...',
+      title: 'Guardando datos',
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    this._httpService.patchProduct(this.product.id, this.product).subscribe((product: Product) => {
+      Swal.close();
+
+      this.changeDataCalc = false;
+      this.disabledDataCalc = true;
+
+      this.clearControls();
+
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Datos guardados',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    },
+    error => {
+
+      Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: 'Error',
+        html: error,
+        showConfirmButton: false,
+        timer: 1500
+      });
+
+    }
+    );
+  }
+
+  onSubmitDataCalc(f) {
+
+    if(f.invalid){
+      this.validatePrice(f);
+
+      return false;
+    }
+    this.noValidPrice=false;
+
+    this.saveDataCalc();
+  }
+
+  validatePrice(f) {
+    if(f.controls.price.errors && f.controls.price.errors.required){
+      this.noValidPriceMsg = "Este campo es requerido";
+      this.noValidPrice = true;
+      return;
+    }
+
+    if(f.controls.price.errors && f.controls.price.errors.min){
+      this.noValidPriceMsg = "El valor debe ser mayor a cero";
+      this.noValidPrice=true;
+      return;
+    }
+
+    this.noValidPrice = false;
+    return;
+  }
+
+  calculateAmount(calcBy, value){
+    if(calcBy == this.product.calc_by){
+      if(value!=""){
+        this.input_output.amount = value * this.product.price;
+      }
+    }
+  }
+
+  cleanErrorMsgs(){
+    this.noValidAmount = false;
+    this.noValidAmountMsg = "";
+    this.noValidBoxes = false;
+    this.noValidBoxesMsg = "";
+    this.noValidPieces = false;
+    this.noValidPiecesMsg = "";
+    this.noValidKilograms = false;
+    this.noValidKilogramsMsg = "";
+    this.noValidDate = false;
+    this.noValidDateMsg = "";
+    this.noValidPrice = false;
+    this.noValidPriceMsg = "";
+  }
+
+  setFocus(calcByK, calcByP, calcByB){
+    let control: string;
+    if(calcByK=="Y"){
+      control = '#kilograms';
+    }else if(calcByP=="Y"){
+      control = '#pieces';
+    }
+    else if(calcByB=="Y"){
+      control = '#boxes';
+    };
+
+    setTimeout(() => {
+      var element = this.renderer.selectRootElement(control);
+      element.focus();
+    }, 100);
   }
 
 }

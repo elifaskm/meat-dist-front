@@ -6,4 +6,6 @@ export interface Product{
   by_pieces: string;
   by_boxes: string;
   is_deleted: string;
+  price: number;
+  calc_by: string;
 }
