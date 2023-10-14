@@ -113,4 +113,20 @@ export class HttpService{
     return this._http.patch(this.baseUrl + "/product/"+id, body);
   }
 
+  public delAllStock(){
+    return this._http.delete(this.baseUrl + "/stock/");
+  }
+
+  public delAllInputsOutputs(){
+    return this._http.delete(this.baseUrl + "/inputsoutputs/");
+  }
+
+  public getAllUserPermissions(userId:number){
+    return this._http.get(this.baseUrl + "/user/"+userId+"/permissions");
+  }
+
+  public signIn(body: any){
+    return this._http.post(this.baseUrl + "/auth/signIn", body);
+  }
+
 }

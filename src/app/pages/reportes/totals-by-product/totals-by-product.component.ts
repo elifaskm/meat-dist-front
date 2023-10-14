@@ -68,7 +68,8 @@ export class TotalsByProductComponent implements OnInit {
         is_deleted: "selected",
         meat_typeId: 0,
         price: 0,
-        calc_by: ""
+        calc_by: "",
+        kg_by_boxes: 0
       });
 
       products.sort((a, b) => (a.description > b.description) ? 1 : -1);

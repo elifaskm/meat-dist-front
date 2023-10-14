@@ -11,6 +11,7 @@ import { RegisterOutputComponent } from '../../pages/inputs_outputs/register-out
 import { ReportesComponent } from '../../pages/reportes/reportes.component';
 import { TotalsByProductComponent } from '../../pages/reportes/totals-by-product/totals-by-product.component';
 import { TotalsByDateComponent } from '../../pages/reportes/totals-by-date/totals-by-date.component';
+import { RestartDbComponent } from '../../pages/restart-db/restart-db.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard',      component: DashboardComponent },
@@ -23,5 +24,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'register-output',      component: RegisterOutputComponent },
     { path: 'reportes',      component: ReportesComponent },
     { path: 'totals-by-product',      component: TotalsByProductComponent },
-    { path: 'totals-by-date',      component: TotalsByDateComponent }
+    { path: 'totals-by-date',      component: TotalsByDateComponent },
+    { path: 'restart-db',      component: RestartDbComponent }
 ];

@@ -8,4 +8,5 @@ export interface Product{
   is_deleted: string;
   price: number;
   calc_by: string;
+  kg_by_boxes: number;
 }

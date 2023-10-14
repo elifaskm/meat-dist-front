@@ -79,7 +79,8 @@ export class InputsOutputsComponent implements OnInit {
         is_deleted: "selected",
         meat_typeId: 0,
         price: 0,
-        calc_by: ""
+        calc_by: "",
+        kg_by_boxes: 0
       });
 
       this.products = itemAll.concat(products);

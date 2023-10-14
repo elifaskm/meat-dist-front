@@ -5,6 +5,8 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './pages/register/register.component';
 
 const routes: Routes =[
   {
@@ -24,6 +26,15 @@ const routes: Routes =[
     path: '',
     component: AuthLayoutComponent,
     children: [
+      {
+        path: 'login', component: LoginComponent
+      },
+      {
+          path: 'register', component: RegisterComponent
+      },
+      {
+        path: '**', redirectTo: 'login'
+      },
       {
         path: '',
         loadChildren: () => import('src/app/layouts/auth-layout/auth-layout.module').then(m => m.AuthLayoutModule)

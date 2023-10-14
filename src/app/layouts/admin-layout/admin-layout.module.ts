@@ -17,6 +17,8 @@ import { RegisterOutputComponent } from '../../pages/inputs_outputs/register-out
 import { ReportesComponent } from '../../pages/reportes/reportes.component';
 import { TotalsByProductComponent } from '../../pages/reportes/totals-by-product/totals-by-product.component';
 import { TotalsByDateComponent } from '../../pages/reportes/totals-by-date/totals-by-date.component';
+import { RestartDbComponent } from '../../pages/restart-db/restart-db.component';
+import { KgByBoxesComponent } from '../../pages/inputs_outputs/kg-by-boxes/kg-by-boxes.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 // import { ToastrModule } from 'ngx-toastr';
 
@@ -40,7 +42,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     RegisterOutputComponent,
     ReportesComponent,
     TotalsByProductComponent,
-    TotalsByDateComponent
+    TotalsByDateComponent,
+    RestartDbComponent,
+    KgByBoxesComponent
   ]
 })
 

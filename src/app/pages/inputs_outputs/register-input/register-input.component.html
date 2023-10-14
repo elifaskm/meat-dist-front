@@ -60,6 +60,8 @@
           </form>
         </div>
       </div>
+      <br>
+      <app-kg-by-boxes [product]="product" *ngIf="product.by_boxes=='Y'" (newKgEvent)="updateKgByBoxes($event)"></app-kg-by-boxes>
     </div>
 
     <div class="col-xl-8 order-xl-1">

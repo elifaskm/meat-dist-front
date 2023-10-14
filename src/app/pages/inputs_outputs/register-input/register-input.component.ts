@@ -27,6 +27,7 @@ export class RegisterInputComponent implements OnInit {
   is_deleted: "",
   price: 0,
   calc_by: "",
+  kg_by_boxes: 0
  };
  public ListCalcBy = listCalcBy;//[{key:"", value:""}];
 
@@ -109,6 +110,11 @@ export class RegisterInputComponent implements OnInit {
 
       this.setFocus(this.product.by_kilograms, this.product.by_pieces, this.product.by_boxes);
     })
+  }
+
+  updateKgByBoxes(kg: number){
+    this.product.kg_by_boxes = kg;
+    this.clearControls();
   }
 
   clearControls(){
@@ -369,6 +375,10 @@ export class RegisterInputComponent implements OnInit {
       if(value!=""){
         this.input_output.amount = value * this.product.price;
       }
+    }
+
+    if(calcBy=="K" && this.product.by_boxes=="Y" && this.product.kg_by_boxes){
+      this.input_output.boxes = value / this.product.kg_by_boxes;
     }
   }
 
