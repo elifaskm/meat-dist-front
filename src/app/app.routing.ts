@@ -7,13 +7,22 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { isAuthenticatedGuard } from './guards/is-authenticated.guard';
+import { isNotAuthenticatedGuard } from './guards';
 
 const routes: Routes =[
   {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
-  }, {
+    path: 'auth',
+    canActivate: [ isNotAuthenticatedGuard ],
+    loadChildren: () => import('./layouts/auth-layout/auth-layout.module').then(m => m.AuthLayoutModule),
+  },
+  // {
+  //   path: 'dashboard',
+  //   //canActivate: [isAuthenticatedGuard],
+  //   //redirectTo: 'dashboard',
+  //   //pathMatch: 'full',
+  // },
+  {
     path: '',
     component: AdminLayoutComponent,
     children: [
@@ -42,10 +51,10 @@ const routes: Routes =[
     ]
   }, {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'auth'
   }
 ];
-
+//dashboard
 @NgModule({
   imports: [
     CommonModule,

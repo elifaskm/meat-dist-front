@@ -1,7 +1,9 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, inject, computed } from '@angular/core';
 import { ROUTES } from '../sidebar/sidebar.component';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Router } from '@angular/router';
+import { User } from 'src/app/models';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,6 +11,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
+//@Input() user;
+private authService = inject(AuthService);
+public user = computed( () => this.authService.currentUser() );
+
   public focus;
   public listTitles: any[];
   public location: Location;
@@ -31,6 +37,10 @@ export class NavbarComponent implements OnInit {
         }
     }
     return 'Bienvenido';
+  }
+
+  onLogout(){
+    this.authService.logout();
   }
 
 }

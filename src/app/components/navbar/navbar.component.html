@@ -23,7 +23,7 @@
               <img alt="Image placeholder" src="assets/img/brand/favicon.png">
             </span>
             <div class="media-body ml-2 d-none d-lg-block">
-              <span class="mb-0 text-sm  font-weight-bold">Usuario</span>
+              <span class="mb-0 text-sm  font-weight-bold">{{user().username}}</span>
             </div>
           </div>
         </a>
@@ -50,7 +50,7 @@
           <div class="dropdown-divider"></div>
           <a href="#!" class="dropdown-item">
             <i class="ni ni-user-run"></i>
-            <span>Logout</span>
+            <span (click)="onLogout()">Logout</span>
           </a>
         </div>
       </li>

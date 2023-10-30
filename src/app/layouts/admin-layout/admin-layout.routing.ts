@@ -12,9 +12,10 @@ import { ReportesComponent } from '../../pages/reportes/reportes.component';
 import { TotalsByProductComponent } from '../../pages/reportes/totals-by-product/totals-by-product.component';
 import { TotalsByDateComponent } from '../../pages/reportes/totals-by-date/totals-by-date.component';
 import { RestartDbComponent } from '../../pages/restart-db/restart-db.component';
+import { isAuthenticatedGuard } from 'src/app/guards';
 
 export const AdminLayoutRoutes: Routes = [
-    { path: 'dashboard',      component: DashboardComponent },
+    { path: 'dashboard', canActivate: [isAuthenticatedGuard],      component: DashboardComponent },
     { path: 'inputs_outputs',      component: InputsOutputsComponent },
     { path: 'user-profile',   component: UserProfileComponent },
     { path: 'tables',         component: TablesComponent },
