@@ -11,16 +11,10 @@ import { isAuthenticatedGuard } from './guards/is-authenticated.guard';
 import { isNotAuthenticatedGuard } from './guards';
 
 const routes: Routes =[
-  {
-    path: 'auth',
-    canActivate: [ isNotAuthenticatedGuard ],
-    loadChildren: () => import('./layouts/auth-layout/auth-layout.module').then(m => m.AuthLayoutModule),
-  },
   // {
-  //   path: 'dashboard',
-  //   //canActivate: [isAuthenticatedGuard],
-  //   //redirectTo: 'dashboard',
-  //   //pathMatch: 'full',
+  //   path: 'auth',
+  //   canActivate: [ isNotAuthenticatedGuard ],
+  //   loadChildren: () => import('./layouts/auth-layout/auth-layout.module').then(m => m.AuthLayoutModule),
   // },
   {
     path: '',
@@ -45,7 +39,8 @@ const routes: Routes =[
         path: '**', redirectTo: 'login'
       },
       {
-        path: '',
+        path: 'auth',
+        canActivate: [ isNotAuthenticatedGuard ],
         loadChildren: () => import('src/app/layouts/auth-layout/auth-layout.module').then(m => m.AuthLayoutModule)
       }
     ]

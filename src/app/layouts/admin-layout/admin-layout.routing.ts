@@ -16,15 +16,15 @@ import { isAuthenticatedGuard } from 'src/app/guards';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard', canActivate: [isAuthenticatedGuard],      component: DashboardComponent },
-    { path: 'inputs_outputs',      component: InputsOutputsComponent },
-    { path: 'user-profile',   component: UserProfileComponent },
+    { path: 'inputs_outputs', canActivate: [isAuthenticatedGuard],      component: InputsOutputsComponent },
+    { path: 'user-profile', canActivate: [isAuthenticatedGuard],   component: UserProfileComponent },
     { path: 'tables',         component: TablesComponent },
     { path: 'icons',          component: IconsComponent },
     { path: 'maps',           component: MapsComponent },
-    { path: 'register-input',      component: RegisterInputComponent },
-    { path: 'register-output',      component: RegisterOutputComponent },
-    { path: 'reportes',      component: ReportesComponent },
-    { path: 'totals-by-product',      component: TotalsByProductComponent },
-    { path: 'totals-by-date',      component: TotalsByDateComponent },
-    { path: 'restart-db',      component: RestartDbComponent }
+    { path: 'register-input', canActivate: [isAuthenticatedGuard],      component: RegisterInputComponent },
+    { path: 'register-output', canActivate: [isAuthenticatedGuard],      component: RegisterOutputComponent },
+    { path: 'reportes', canActivate: [isAuthenticatedGuard],      component: ReportesComponent },
+    { path: 'totals-by-product', canActivate: [isAuthenticatedGuard],      component: TotalsByProductComponent },
+    { path: 'totals-by-date', canActivate: [isAuthenticatedGuard],      component: TotalsByDateComponent },
+    { path: 'restart-db', canActivate: [isAuthenticatedGuard],      component: RestartDbComponent }
 ];
