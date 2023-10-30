@@ -51,7 +51,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                 </div>
-                <input class="form-control" placeholder="Contraseña" type="password" [(ngModel)]="user.password">
+                <input class="form-control" placeholder="Contraseña" type="password" [(ngModel)]="user.password" (keyup.enter)="signIn()">
               </div>
             </div>
             <!-- <div class="custom-control custom-control-alternative custom-checkbox">
