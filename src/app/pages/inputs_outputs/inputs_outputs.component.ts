@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpService }  from 'src/app/services/http.service';
+import { HttpService, BranchHttpService }  from 'src/app/services';
 import { InputsOutputs } from "src/app/models/inputs_outputs.model";
 import { MeatType } from "src/app/models/meat_type.model";
 import { Product } from "src/app/models/product.model";
 import Swal from "sweetalert2";
+import { Branch } from 'src/app/models/branch.model';
+import { ProductSent } from 'src/app/models/product_sent.model';
+//import { toInteger } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 @Component({
   selector: 'app-inputs-outputs',
@@ -14,6 +17,9 @@ export class InputsOutputsComponent implements OnInit {
   public meat_types: MeatType[] = [];
   public products: Product[] = [];
   public inputsOutputs: InputsOutputs[];
+  public branches: Branch[];
+  private _producSent: ProductSent;
+
   public filterParams:any = {
     pageSize: 20,
     pageNum: 0,
@@ -29,7 +35,7 @@ export class InputsOutputsComponent implements OnInit {
   public pages: number[] = [];
   public currentPage: number = 1;
 
-  constructor(public _httpService: HttpService) { }
+  constructor(public _httpService: HttpService, public _branchHttpService: BranchHttpService) { }
 
   ngOnInit() {
     this._httpService.getMeatTypes(10, 0).subscribe((meat_types: MeatType[]) => {
@@ -46,6 +52,10 @@ export class InputsOutputsComponent implements OnInit {
     });
 
     this.findInputsOutputs();
+
+    this._branchHttpService.getBranches().subscribe((branches: Branch[]) => {
+      this.branches = branches;
+    });
   }
 
   findInputsOutputs(getTotalRows: boolean = true){
@@ -194,6 +204,169 @@ export class InputsOutputsComponent implements OnInit {
       });
 
     });
+  }
+
+  asignarSucursalDestino(id:number): void{
+    let obj=new Object();
+    this._branchHttpService.getProductSentToBranch(id).subscribe((prodSent: ProductSent) => {
+      if(prodSent){
+        this._producSent = prodSent;
+
+        let branchSelected = this.branches.find(x => x.id == prodSent.BranchId);
+
+        obj["id-"+branchSelected.id] = branchSelected.name;
+
+        this.branches.forEach(element => {
+          if(element.id!=prodSent.BranchId){
+            obj["id-"+element.id] = element.name;
+          }
+        });
+
+        if(prodSent.input_outputId>0){
+          obj["id-0"] = "-Ninguno-";
+        }
+      }else{
+        this._producSent = null;
+        obj["id-0"] = "-Ninguno-";
+        this.branches.forEach(element => {
+          obj["id"+element.id] = element.name;
+        });
+      }
+
+      Swal.fire({
+        title: "Sucursal Destino",
+        input: "select",
+        inputOptions: obj,
+
+        showCancelButton: true,
+        inputValidator: (value) => {
+          let _id = value.split("-")[1];
+          console.log(_id);
+           //guardar cuando se seleccione
+           //if tenía asignado una sucursal entonces se update
+           if(this._producSent){
+            //si lo cambia por cero entonces es eliminar
+            if(Number(_id)==0){
+              this._branchHttpService.deleteProductSentToBranch(this._producSent.id).subscribe((resp: any) => {
+                Swal.close();
+
+                if(resp){
+                }else{
+                  Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error',
+                    html: "Error al guardar registro",
+                    showConfirmButton: false,
+                    timer: 2000
+                  });
+                }
+              },
+              error => {
+                Swal.close();
+                Swal.fire({
+                  position: 'top-end',
+                  icon: 'error',
+                  title: 'Error',
+                  html: error,
+                  showConfirmButton: false,
+                  timer: 2000
+                });
+
+              });
+            }
+            else{
+              this._producSent.BranchId = Number(_id);
+              this._branchHttpService.updateProductSentToBranch(this._producSent.id, this._producSent).subscribe((resp: any) => {
+                Swal.close();
+
+                if(resp){
+                }else{
+                  Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error',
+                    html: "Error al guardar registro",
+                    showConfirmButton: false,
+                    timer: 2000
+                  });
+                }
+              },
+              error => {
+                Swal.close();
+                Swal.fire({
+                  position: 'top-end',
+                  icon: 'error',
+                  title: 'Error',
+                  html: error,
+                  showConfirmButton: false,
+                  timer: 2000
+                });
+
+              });
+            }
+           }else{
+            let output = this.inputsOutputs.find(e=>e.id===id);
+            this._producSent = {
+              id: 0,
+              ProductId: output.ProductId,
+              kilograms: output.kilograms,
+              pieces: output.pieces,
+              boxes: output.boxes,
+              amount: output.amount,
+              date: output.date,
+              status: "P",
+              BranchId: Number(_id),
+              input_outputId: output.id
+            }
+            this._branchHttpService.saveProductSentToBranch(this._producSent).subscribe((resp: any) => {
+              Swal.close();
+
+              if(resp){
+              }else{
+                Swal.fire({
+                  position: 'top-end',
+                  icon: 'error',
+                  title: 'Error',
+                  html: "Error al guardar registro",
+                  showConfirmButton: false,
+                  timer: 2000
+                });
+              }
+            },
+            error => {
+              Swal.close();
+              Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error',
+                html: error,
+                showConfirmButton: false,
+                timer: 2000
+              });
+
+            });
+           }
+           //if no tenía entonces se insert
+          return new Promise((resolve) => {
+            //if (value === "oranges") {
+              resolve();
+            // } else {
+            //   resolve("You need to select oranges :)");
+            // }
+          });
+        }
+      });
+    });
+
+
+
+    //const { value: fruit } =
+
+
+    // if (fruit) {
+    //   Swal.fire(`You selected: ${fruit}`);
+    // }
   }
 
 }

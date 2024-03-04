@@ -1,11 +1,14 @@
+//import { Branch } from './../../../models/branch.model';
 import { InputsOutputs } from 'src/app/models/inputs_outputs.model';
 import { Component, Renderer2, OnInit } from '@angular/core';
-import { HttpService }  from 'src/app/services/http.service';
+//import { HttpService }  from 'src/app/services/http.service';
 import { MeatType } from "src/app/models/meat_type.model";
 import { Product } from "src/app/models/product.model";
 import { Branch } from "src/app/models/branch.model";
 import Swal from "sweetalert2";
 import { listCalcBy } from './../../../models/calc_by.model';
+import { ProductSent } from 'src/app/models/product_sent.model';
+import { HttpService, BranchHttpService }  from 'src/app/services';
 
 @Component({
   selector: 'app-register-output',
@@ -17,6 +20,7 @@ export class RegisterOutputComponent implements OnInit {
  public meat_types: MeatType[] = [];
  public products: Product[] = [];
  public branches: Branch[] = [];
+ public target_branches: Branch[] = [];
 
  public product: Product = {
   id: 0,
@@ -47,6 +51,19 @@ export class RegisterOutputComponent implements OnInit {
       BranchId: 0
      };
 
+     public product_sent: ProductSent = {
+      id: null,
+      ProductId: 0,
+      kilograms: null,
+      pieces: null,
+      boxes: null,
+      amount: null,
+      date: new Date(),
+      status: "P",
+      BranchId: 0,
+      input_outputId: null
+     };
+
   private dcurrent = new Date();
   public dateString = this.dcurrent.getFullYear() + '-' + String(this.dcurrent.getMonth() + 1).padStart(2, '0') + '-' + String(this.dcurrent.getDate()).padStart(2, '0');
 
@@ -73,7 +90,7 @@ export class RegisterOutputComponent implements OnInit {
   public previousCalcBy: string = "";
 
 
-  constructor(public _httpService: HttpService, private renderer:Renderer2) { }
+  constructor(public _httpService: HttpService, private renderer:Renderer2, public _branchHttpService: BranchHttpService) { }
 
   ngOnInit() {
 
@@ -85,6 +102,21 @@ export class RegisterOutputComponent implements OnInit {
     this._httpService.getAllWarehouse().subscribe((branches: Branch[]) => {
       this.input_output.BranchId = branches[0].id;
       this.branches = branches;
+    });
+
+    this._branchHttpService.getBranches().subscribe((branches: Branch[]) => {
+      let branchNoOne : Branch = {
+        id: 0,
+        name: "-Ninguno-",
+        adress: "",
+        is_deleted: "N",
+        is_warehouse: "N"
+      };
+      this.target_branches.push(
+       branchNoOne
+      );
+      //this.product_sent.BranchId = branches[0].id;
+      this.target_branches = this.target_branches.concat(branches);
     });
 
   }
@@ -158,8 +190,15 @@ export class RegisterOutputComponent implements OnInit {
     });
 
     this.input_output.date = new Date(this.dateString);
-    this._httpService.postInputsOutputs(this.input_output).subscribe((product: Product) => {
-      Swal.close();
+    this._httpService.postInputsOutputs(this.input_output).subscribe((io: InputsOutputs) => {
+
+      //guardar productos enviados
+      if(this.product_sent.BranchId>0){
+        this.saveProductSent(io);
+      }
+      else{
+        Swal.close();
+      }
 
       this.clearControls();
 
@@ -182,6 +221,36 @@ export class RegisterOutputComponent implements OnInit {
         timer: 2000
       });
 
+    }
+    );
+  }
+
+  saveProductSent(io: InputsOutputs){
+
+    this.product_sent.ProductId=this.input_output.ProductId;
+    this.product_sent.kilograms=this.input_output.kilograms;
+    this.product_sent.pieces=this.input_output.pieces;
+    this.product_sent.boxes=this.input_output.boxes;
+    this.product_sent.amount=this.input_output.amount;
+    this.product_sent.date=this.input_output.date;
+    console.log(io);
+    this.product_sent.input_outputId = io.id;
+
+    this._branchHttpService.saveProductSentToBranch(this.product_sent).subscribe((productSent: ProductSent) => {
+
+      //Swal.close();
+
+    },
+    error => {
+
+      Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: 'Error',
+        html: error,
+        showConfirmButton: false,
+        timer: 2000
+      });
     }
     );
   }

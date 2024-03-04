@@ -12,11 +12,13 @@ import { ReportesComponent } from '../../pages/reportes/reportes.component';
 import { TotalsByProductComponent } from '../../pages/reportes/totals-by-product/totals-by-product.component';
 import { TotalsByDateComponent } from '../../pages/reportes/totals-by-date/totals-by-date.component';
 import { RestartDbComponent } from '../../pages/restart-db/restart-db.component';
+import { BranchCashControlComponent } from '../../pages/branch-cash-control/branch-cash-control.component';
 import { isAuthenticatedGuard } from 'src/app/guards';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard', canActivate: [isAuthenticatedGuard],      component: DashboardComponent },
     { path: 'inputs_outputs', canActivate: [isAuthenticatedGuard],      component: InputsOutputsComponent },
+    { path: 'branch-cash-control', canActivate: [isAuthenticatedGuard],      component: BranchCashControlComponent },
     { path: 'user-profile', canActivate: [isAuthenticatedGuard],   component: UserProfileComponent },
     { path: 'tables',         component: TablesComponent },
     { path: 'icons',          component: IconsComponent },

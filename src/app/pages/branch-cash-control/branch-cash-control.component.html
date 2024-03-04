@@ -1,0 +1,129 @@
+<div class="header bg-gradient-danger pb-6 pt-5 pt-md-8">
+
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row" *ngFor="let item of branchCashControlLst">
+    <div class="col pb-2">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row ">
+            <div class="col">
+              <li style="list-style-type: none;">
+                <a href="javascript:void(0)" *ngIf="!collapsedBranchItemLst[item.branchId]" (click)="collapsedBranchItemLst[item.branchId]=true">
+                  <i class="fas fa-angle-up"> </i>
+                  <span style="font-family:Open Sans, sans-serif;"> {{item.name}}</span>
+                </a>
+                <a href="javascript:void(0)" *ngIf="collapsedBranchItemLst[item.branchId]" (click)="collapsedBranchItemLst[item.branchId]=false">
+                  <i class="fas fa-angle-down"> </i>
+                  <span style="font-family:Open Sans, sans-serif;"> {{item.name}}</span>
+                </a>
+              </li>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive" *ngIf="!collapsedBranchItemLst[item.branchId]">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col" class="text-right">Reportado en sucursal</th>
+                <th scope="col" class="text-right">Calculado en sistema</th>
+                <th scope="col"></th>
+                <th scope="col" class="text-center">Información Adicional</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="text-success">
+                    <i class="fas fa-circle"></i>
+                  </span>
+                </td>
+                <td>
+                  <span class="mb-0 text-sm">Entrada</span>
+                </td>
+                <td class="text-right">
+                  <span class="mb-0 text-sm">{{item.entry}}</span>
+                </td>
+                <td class="text-right">
+                  <span class="mb-0 text-sm">{{item.calcEntry}}</span>
+                </td>
+                <td class="text-right">
+                  <a href="javascript:void(0)">Ver detalle</a>
+                </td>
+                <td rowspan="3"  class="text-center">
+                  <span>{{item.adicionalInfo}}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="text-yellow">
+                    <i class="fas fa-circle"></i>
+                  </span>
+                </td>
+                <td>
+                  <span class="mb-0 text-sm">Venta</span>
+                </td>
+                <td  class="text-right">
+                  <span class="mb-0 text-sm">{{item.selled}}</span>
+                </td>
+                <td  class="text-right">
+                  <span class="mb-0 text-sm">{{item.previousResidue + item.calcEntry - item.residue}}</span>
+                </td>
+                <td class="text-right">
+                  <a href="javascript:void(0)">Ver detalle</a>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="text-danger">
+                    <i class="fas fa-circle"></i>
+                  </span>
+                </td>
+                <td>
+                  <span class="mb-0 text-sm">Saldo</span>
+                </td>
+                <td class="text-right">
+                  <span class="mb-0 text-sm">{{item.residue}}</span>
+                </td>
+                <td class="text-right">
+                  <span class="mb-0 text-sm">{{item.previousResidue + item.calcEntry - item.selled}}</span>
+                </td>
+                <td class="text-right">
+                  <a href="javascript:void(0)">Ver detalle</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

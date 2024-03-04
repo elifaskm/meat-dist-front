@@ -143,6 +143,7 @@
                     </a>
                     <div ngbDropdownMenu class=" dropdown-menu-right dropdown-menu-arrow">
                       <a class="dropdown-item" href="javascript:void(0)" (click)="deleteInputOutput(io.id)">Eliminar</a>
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="asignarSucursalDestino(io.id)" *ngIf="io.type == 'O'">Sucursal Destino</a>
                     </div>
                   </div>
                 </td>

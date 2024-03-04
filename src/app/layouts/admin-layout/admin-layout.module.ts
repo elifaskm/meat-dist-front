@@ -20,7 +20,7 @@ import { TotalsByDateComponent } from '../../pages/reportes/totals-by-date/total
 import { RestartDbComponent } from '../../pages/restart-db/restart-db.component';
 import { KgByBoxesComponent } from '../../pages/inputs_outputs/kg-by-boxes/kg-by-boxes.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-// import { ToastrModule } from 'ngx-toastr';
+import { BranchCashControlComponent } from '../../pages/branch-cash-control/branch-cash-control.component';
 
 @NgModule({
   imports: [
@@ -44,7 +44,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     TotalsByProductComponent,
     TotalsByDateComponent,
     RestartDbComponent,
-    KgByBoxesComponent
+    KgByBoxesComponent,
+    BranchCashControlComponent
   ]
 })
 
