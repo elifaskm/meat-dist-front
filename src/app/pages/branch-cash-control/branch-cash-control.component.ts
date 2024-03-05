@@ -3,6 +3,7 @@ import { HttpService, BranchHttpService, BranchCashControlHttpService }  from 's
 
 import { Branch } from 'src/app/models/branch.model';
 import { BranchCashControl } from 'src/app/models/brach-cash-control.model';
+import { ProductSent } from 'src/app/models/product_sent.model';
 
 @Component({
   selector: 'app-inputs-outputs',
@@ -13,8 +14,11 @@ export class BranchCashControlComponent implements OnInit {
 
   public branches: Branch[];
   public branchCashControlLst: BranchCashControl[];
-
+  public productSentLst: ProductSent[] = [];
   public collapsedBranchItemLst: any[];
+  public dateOfCapture: string="";
+  public branchName: string="";
+
 
   constructor(public _httpService: HttpService, public _branchHttpService: BranchHttpService, public _branchCashControlHttpService: BranchCashControlHttpService) { }
 
@@ -44,6 +48,52 @@ export class BranchCashControlComponent implements OnInit {
 
 
 
+  }
+
+  getEntryDetails(brachId, name, dateOfCapture){
+    //buscar la lista de salidas envíadas y mostrarlo en pantalla
+    let filterParams:any = {
+      date: dateOfCapture,
+      branchId: brachId
+    }
+
+    this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
+      this.productSentLst = productSentLst;
+      this.branchName = name;
+      this.dateOfCapture = dateOfCapture;
+      this.openModal('entrysModal');
+    });
+  }
+
+  getTotal():number{
+
+    const sum = this.productSentLst.reduce((accumulator, value) => {
+      return Number(accumulator) + Number(value.amount);
+    }, 0);
+
+    return sum;
+  }
+
+  enableEditEntryDetail(){
+    //debe habilitar el campo para editar el dato
+  }
+
+  saveEditedEntryDetail(){
+    //guardar dato nuevo al dar enter
+  }
+
+  openModal(divId){
+    const modelDiv = document.getElementById(divId);
+    if(modelDiv != null){
+      modelDiv.style.display = 'block';
+    }
+  }
+
+  closeModal(divId){
+    const modelDiv = document.getElementById(divId);
+    if(modelDiv != null){
+      modelDiv.style.display = 'none';
+    }
   }
 
 }
