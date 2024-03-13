@@ -8,6 +8,7 @@ import { Product } from '../models/product.model';
 import { Stock } from "../models/stock.model";
 import { Branch } from '../models/branch.model';
 import { RepByDate } from '../models/rep_by_date';
+import { Configuration } from '../models/configuration.model';
 
 @Injectable({
   providedIn: "root"
@@ -127,6 +128,10 @@ export class HttpService{
 
   public signIn(body: any){
     return this._http.post(this.baseUrl + "/auth/signIn", body);
+  }
+
+  public getConfigurationByKey(key: string){
+    return this._http.get<Configuration>(this.baseUrl + "/configuration/bykey/" + key);
   }
 
 }

@@ -4,6 +4,7 @@ import { HttpService, BranchHttpService, BranchCashControlHttpService }  from 's
 import { Branch } from 'src/app/models/branch.model';
 import { BranchCashControl } from 'src/app/models/brach-cash-control.model';
 import { ProductSent } from 'src/app/models/product_sent.model';
+import { Configuration } from 'src/app/models/configuration.model';
 
 @Component({
   selector: 'app-inputs-outputs',
@@ -16,16 +17,64 @@ export class BranchCashControlComponent implements OnInit {
   public branchCashControlLst: BranchCashControl[];
   public productSentLst: ProductSent[] = [];
   public collapsedBranchItemLst: any[];
-  public dateOfCapture: string="";
-  public branchName: string="";
+  public isCollapsedAll:boolean=true;
+  public semaphoreConf: any;
 
+  public dateOfCapture: string = "";
+  public branchName: string = "";
+  public totalSales: number = 0;
+  public previousResidue: number = 0;
+  public calcEntry: number = 0;
+  public selled: number = 0;
+  public residue: number = 0;
+
+  public noValidDate = false;
+  public noValidDateMsg = "";
+
+  public noValidAmount = false;
+  public noValidAmountMsg = "";
+  public noValidBoxes = false;
+  public noValidBoxesMsg = "";
+  public noValidPieces = false;
+  public noValidPiecesMsg = "";
+  public noValidKilograms = false;
+  public noValidKilogramsMsg = "";
+
+  public disabledKilograms = false;
+  public disabledPieces = false;
+  public disabledBoxes = false;
+
+  public filterParams:any = {
+    dateOfCapture: null,
+    branchId: null,
+    status: null
+  }
+
+  public editProductSent = false;
+  public productSentToEdit : ProductSent;
+  public branchCashControlToEdit : BranchCashControl;
+
+  private dcurrent = new Date();
+  public dateFilterString = this.dcurrent.getFullYear() + '-' + String(this.dcurrent.getMonth() + 1).padStart(2, '0') + '-' + String(this.dcurrent.getDate()).padStart(2, '0');
 
   constructor(public _httpService: HttpService, public _branchHttpService: BranchHttpService, public _branchCashControlHttpService: BranchCashControlHttpService) { }
 
   ngOnInit() {
 
+
+
     this._branchHttpService.getBranches().subscribe((branches: Branch[]) => {
-      this.branches = branches;
+      this.filterParams.branchId = 0;
+      let arrayAllItem = [];
+      let allItem : Branch = {
+        id: 0,
+        name: "-- Todas --",
+        adress: "",
+        is_deleted: "N",
+        is_warehouse: "N",
+      }
+      arrayAllItem.push(allItem);
+      this.branches = arrayAllItem.concat(branches);
 
       let idLst = branches.map(a => a.id);
       this.collapsedBranchItemLst = new Array(Math.max(...idLst));
@@ -35,26 +84,62 @@ export class BranchCashControlComponent implements OnInit {
       });
     });
 
-    let filterParams:any = {
-      dateOfCapture: null,
-      branchId: null,
-      status: null
-    }
-    filterParams.dateOfCapture = "2024-02-22";
-    this._branchCashControlHttpService.getFullBranchCashControl(filterParams).subscribe((branchCashControlLst: BranchCashControl[]) => {
-      this.branchCashControlLst = branchCashControlLst;
+    this._httpService.getConfigurationByKey("SEMAPHORE").subscribe((configuration: Configuration) => {
+      this.semaphoreConf = JSON.parse(configuration.value);
+
+      this.filterParams.dateOfCapture = this.dateFilterString;
+      this.getBranchCashControlLst();
     });
-
-
-
 
   }
 
-  getEntryDetails(brachId, name, dateOfCapture){
+  getBranchCashControlLst(){
+
+    this._branchCashControlHttpService.getFullBranchCashControl(this.filterParams).subscribe((branchCashControlLst: BranchCashControl[]) => {
+
+      branchCashControlLst.forEach((value) => {
+        const diffEntry = value.entry - value.calcEntry;
+
+        if(diffEntry<=this.semaphoreConf.green.lessthanorequal){
+          value.semaphoreEntry = "green";
+        }else if(diffEntry>this.semaphoreConf.yellow.greaterthan && diffEntry<this.semaphoreConf.yellow.lessthan){
+          value.semaphoreEntry = "yellow";
+        }else if(diffEntry>=this.semaphoreConf.red.greaterthanorequal){
+          value.semaphoreEntry = "red";
+        }
+
+        const diffSales = value.selled - (value.previousResidue + value.calcEntry - value.residue);
+
+        if(diffSales<=this.semaphoreConf.green.lessthanorequal){
+          value.semaphoreSales = "green";
+        }else if(diffSales>this.semaphoreConf.yellow.greaterthan && diffSales<this.semaphoreConf.yellow.lessthan){
+          value.semaphoreSales = "yellow";
+        }else if(diffSales>=this.semaphoreConf.red.greaterthanorequal){
+          value.semaphoreSales = "red";
+        }
+
+        const diffResidue = value.selled - (value.previousResidue + value.calcEntry - value.residue);
+
+        if(diffResidue<=this.semaphoreConf.green.lessthanorequal){
+          value.semaphoreResidue = "green";
+        }else if(diffResidue>this.semaphoreConf.yellow.greaterthan && diffResidue<this.semaphoreConf.yellow.lessthan){
+          value.semaphoreResidue = "yellow";
+        }else if(diffResidue>=this.semaphoreConf.red.greaterthanorequal){
+          value.semaphoreResidue = "red";
+        }
+
+      });
+
+      this.branchCashControlLst = branchCashControlLst;
+    });
+  }
+
+
+  getEntryDetails(branchId, name, dateOfCapture){
     //buscar la lista de salidas envíadas y mostrarlo en pantalla
     let filterParams:any = {
       date: dateOfCapture,
-      branchId: brachId
+      branchId: branchId
     }
 
     this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
@@ -65,12 +150,60 @@ export class BranchCashControlComponent implements OnInit {
     });
   }
 
-  getTotal():number{
+  getSalesDetails(branchId, previousResidue, calcEntry, name, dateOfCapture, residue, selled){
+    let filterParams:any = {
+      date: dateOfCapture,
+      branchId: branchId
+    }
+
+    this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
+      this.productSentLst = productSentLst;
+      this.branchName = name;
+      this.dateOfCapture = dateOfCapture;
+      this.previousResidue = previousResidue;
+      this.calcEntry = calcEntry;
+      this.residue = residue;
+      this.selled = selled;
+
+      this.openModal('salesModal');
+    });
+  }
+
+  getResidueDetails(branchId, previousResidue, calcEntry, name, dateOfCapture, selled, residue){
+    let filterParams:any = {
+      date: dateOfCapture,
+      branchId: branchId
+    }
+
+    this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
+      this.productSentLst = productSentLst;
+      this.branchName = name;
+      this.dateOfCapture = dateOfCapture;
+      this.previousResidue = previousResidue;
+      this.calcEntry = calcEntry;
+      this.selled = selled;
+      this.residue = residue;
+
+      this.openModal('residueModal');
+    });
+  }
+
+  getTotalEntrys():number{
 
     const sum = this.productSentLst.reduce((accumulator, value) => {
       return Number(accumulator) + Number(value.amount);
     }, 0);
 
+    return sum;
+  }
+
+  getTotalSales():number{
+    const sum = (this.previousResidue + this.calcEntry) - this.residue;
+    return sum;
+  }
+
+  getTotalResidue():number{
+    const sum = (this.previousResidue + this.calcEntry) - this.selled;
     return sum;
   }
 
@@ -95,5 +228,144 @@ export class BranchCashControlComponent implements OnInit {
       modelDiv.style.display = 'none';
     }
   }
+
+  onSubmit(f) {
+
+    if(f.controls.dateIFilter.errors && f.controls.dateIFilter.errors.required){
+      this.noValidDateMsg = "Se requiere la Fecha";
+      this.noValidDate=true;
+      return;
+    }
+    this.noValidDate=false;
+
+    this.filterParams.dateOfCapture = this.dateFilterString;
+    if(f.value.branchId == 0){
+      this.filterParams.branchId = null;
+    }
+    this.filterParams.status = f.value.estatusFilter ;
+
+    this.getBranchCashControlLst();
+ }
+
+ collapsedAll(b:boolean){
+  for(let i=0; i<this.collapsedBranchItemLst.length; i++){
+    this.collapsedBranchItemLst[i] = b;
+  }
+
+  this.isCollapsedAll = b;
+ }
+
+//  Productos enviados
+ openEditProductSent(id, selled, residue){
+  //obtener datos de registro
+  this.productSentToEdit = this.productSentLst.find(x=>x.id==id);
+
+  this.disabledBoxes = this.productSentToEdit.boxes == null;
+  this.disabledKilograms = this.productSentToEdit.kilograms == null;
+  this.disabledPieces = this.productSentToEdit.pieces == null;
+
+  //ceder datos a formulario
+  this.branchCashControlToEdit = null;
+  this.editProductSent=true;
+ }
+
+ onSubmitEditProductSent(f) {
+console.log(f);
+console.log(f.controls);
+  if(f.invalid){
+    this.validatePieces(f);
+    this.validateBoxes(f);
+    this.validateAmount(f);
+    this.validateKilograms(f);
+
+    return false;
+  }
+
+  this.noValidKilograms=false;
+  this.noValidPieces = false;
+  this.noValidBoxes = false;
+  this.noValidAmount = false;
+
+  //llamar a setear valores en lista y que se refeleje en grid
+  let objIndex = this.productSentLst.findIndex(x=>x.id==this.productSentToEdit.id);
+  this.productSentLst[objIndex] = this.productSentToEdit;
+
+  this.editProductSent=false;
+}
+
+validateKilograms(f) {
+  if(f.controls.kilograms.errors && f.controls.kilograms.errors.required){
+    this.noValidKilogramsMsg = "Este campo es requerido";
+    this.noValidKilograms=true;
+    return;
+  }
+  if(f.controls.pieces.errors && f.controls.pieces.errors.min){
+    this.noValidKilogramsMsg = "El valor debe ser mayor a cero";
+    this.noValidKilograms=true;
+    return;
+  }
+
+  this.noValidKilograms = false;
+  return;
+}
+
+validatePieces(f) {
+  if(f.controls.pieces.errors && f.controls.pieces.errors.required){
+    this.noValidPiecesMsg = "Este campo es requerido";
+    this.noValidPieces=true;
+    return;
+  }
+  if(f.controls.pieces.errors && f.controls.pieces.errors.min){
+    this.noValidPiecesMsg = "El valor debe ser mayor a cero";
+    this.noValidPieces=true;
+    return;
+  }
+
+  this.noValidPieces = false;
+  return;
+}
+
+validateBoxes(f) {
+  if(f.controls.boxes.errors && f.controls.boxes.errors.required){
+    this.noValidBoxesMsg = "Este campo es requerido";
+    this.noValidBoxes=true;
+    return;
+  }
+  if(f.controls.boxes.errors && f.controls.boxes.errors.min){
+    this.noValidBoxesMsg = "El valor debe ser mayor a cero";
+    this.noValidBoxes=true;
+    return;
+  }
+
+  this.noValidBoxes = false;
+  return;
+}
+
+validateAmount(f) {
+  if(f.controls.amount.errors && f.controls.amount.errors.required){
+    this.noValidAmountMsg = "Este campo es requerido";
+    this.noValidAmount=true;
+    return;
+  }
+  if(f.controls.amount.errors && f.controls.amount.errors.min){
+    this.noValidAmountMsg = "El valor debe ser mayor a cero";
+    this.noValidAmount=true;
+    return;
+  }
+
+  this.noValidAmount = false;
+  return;
+}
+
+cleanErrorMsgs(){
+  this.noValidAmount = false;
+  this.noValidAmountMsg = "";
+  this.noValidBoxes = false;
+  this.noValidBoxesMsg = "";
+  this.noValidPieces = false;
+  this.noValidPiecesMsg = "";
+  this.noValidKilograms = false;
+  this.noValidKilogramsMsg = "";
+}
 
 }

@@ -10,4 +10,7 @@ export interface BranchCashControl{
   status: string;
   calcEntry: number;
   previousResidue: number;
+  semaphoreEntry: string;
+  semaphoreSales: string;
+  semaphoreResidue: string;
 }
