@@ -1,3 +1,5 @@
+import { ProductSentsComponent } from './../../pages/product_sents/product_sents.component';
+import { ProductSent } from './../../models/product_sent.model';
 import { Routes } from '@angular/router';
 
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
@@ -14,10 +16,13 @@ import { TotalsByDateComponent } from '../../pages/reportes/totals-by-date/total
 import { RestartDbComponent } from '../../pages/restart-db/restart-db.component';
 import { BranchCashControlComponent } from '../../pages/branch-cash-control/branch-cash-control.component';
 import { isAuthenticatedGuard } from 'src/app/guards';
+import { UpdateProductSentComponent } from '../../pages/product_sents/update-product-sent/update-product-sent.component';
+
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'dashboard', canActivate: [isAuthenticatedGuard],      component: DashboardComponent },
     { path: 'inputs_outputs', canActivate: [isAuthenticatedGuard],      component: InputsOutputsComponent },
+    { path: 'product_sent', canActivate: [isAuthenticatedGuard],      component: ProductSentsComponent },
     { path: 'branch-cash-control', canActivate: [isAuthenticatedGuard],      component: BranchCashControlComponent },
     { path: 'user-profile', canActivate: [isAuthenticatedGuard],   component: UserProfileComponent },
     { path: 'tables',         component: TablesComponent },
@@ -28,5 +33,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'reportes', canActivate: [isAuthenticatedGuard],      component: ReportesComponent },
     { path: 'totals-by-product', canActivate: [isAuthenticatedGuard],      component: TotalsByProductComponent },
     { path: 'totals-by-date', canActivate: [isAuthenticatedGuard],      component: TotalsByDateComponent },
-    { path: 'restart-db', canActivate: [isAuthenticatedGuard],      component: RestartDbComponent }
+    { path: 'restart-db', canActivate: [isAuthenticatedGuard],      component: RestartDbComponent },
+    { path: 'update-product-sent', canActivate: [isAuthenticatedGuard],      component: UpdateProductSentComponent },
 ];

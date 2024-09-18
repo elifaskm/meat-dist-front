@@ -1,3 +1,4 @@
+import { UpdateProductSentComponent } from './../../pages/product_sents/update-product-sent/update-product-sent.component';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -21,6 +22,8 @@ import { RestartDbComponent } from '../../pages/restart-db/restart-db.component'
 import { KgByBoxesComponent } from '../../pages/inputs_outputs/kg-by-boxes/kg-by-boxes.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BranchCashControlComponent } from '../../pages/branch-cash-control/branch-cash-control.component';
+import { ProductSentsComponent } from '../../pages/product_sents/product_sents.component';
+
 
 @NgModule({
   imports: [
@@ -45,7 +48,9 @@ import { BranchCashControlComponent } from '../../pages/branch-cash-control/bran
     TotalsByDateComponent,
     RestartDbComponent,
     KgByBoxesComponent,
-    BranchCashControlComponent
+    BranchCashControlComponent,
+    ProductSentsComponent,
+    UpdateProductSentComponent
   ]
 })
 

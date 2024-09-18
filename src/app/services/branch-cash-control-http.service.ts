@@ -10,6 +10,7 @@ import { ProductSent } from '../models/product_sent.model';
 
 export class BranchCashControlHttpService{
   private baseUrl: string = environment.BASE_API_URL;
+  private urlGDriveApi: string = environment.API_GDRIVE_URL;
 
   constructor(private readonly _http: HttpClient){
 
@@ -31,6 +32,18 @@ export class BranchCashControlHttpService{
   public getProductSentForBranch(filterParams: any){
     let strParams = "date="+filterParams.date.replaceAll("-", "");
     return this._http.get<ProductSent[]>(this.baseUrl + "/productsent/forbranch/"+filterParams.branchId+"/?" + strParams);
+  }
+
+  public getDriveFilesData(){
+    return this._http.get<object>(this.urlGDriveApi + "/GDriveFiles");
+  }
+
+  public getBranchCashControlById(id: number){
+    return this._http.get<BranchCashControl>(this.baseUrl + "/branchcashcontrol/" + id);
+  }
+
+  public patchBranchCashControl(id: number, body: any){
+    return this._http.patch(this.baseUrl + "/branchcashcontrol/"+id, body);
   }
 
 }

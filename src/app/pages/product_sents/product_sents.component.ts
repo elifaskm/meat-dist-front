@@ -1,24 +1,23 @@
+import { Branch } from './../../models/branch.model';
+import { ProductSent } from './../../models/product_sent.model';
+import { Product } from './../../models/product.model';
 import { Component, OnInit } from '@angular/core';
 import { HttpService, BranchHttpService }  from 'src/app/services';
-import { InputsOutputs } from "src/app/models/inputs_outputs.model";
 import { MeatType } from "src/app/models/meat_type.model";
-import { Product } from "src/app/models/product.model";
 import Swal from "sweetalert2";
-import { Branch } from 'src/app/models/branch.model';
-import { ProductSent } from 'src/app/models/product_sent.model';
-//import { toInteger } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 @Component({
-  selector: 'app-inputs-outputs',
-  templateUrl: './inputs_outputs.component.html',
-  styleUrls: ['./inputs_outputs.component.scss']
+  selector: 'app-product-sents',
+  templateUrl: './product_sents.component.html',
+  styleUrls: ['./product_sents.component.scss']
 })
-export class InputsOutputsComponent implements OnInit {
+export class ProductSentsComponent implements OnInit {
   public meat_types: MeatType[] = [];
   public products: Product[] = [];
-  public inputsOutputs: InputsOutputs[];
   public branches: Branch[];
   private _producSent: ProductSent;
+  public producSents: ProductSent[];
+  public productSentId: number;
 
   public filterParams:any = {
     pageSize: 20,
@@ -27,15 +26,33 @@ export class InputsOutputsComponent implements OnInit {
     meatType: null,
     productId: null,
     iniDate: null,
-    finDate: null
+    finDate: null,
+    branchId: null
   }
 
   public visibleFilters = false;
+  public visibleUpdProdSent = false;
   private pagesLength: number = 0;
   public pages: number[] = [];
   public currentPage: number = 1;
 
   constructor(public _httpService: HttpService, public _branchHttpService: BranchHttpService) { }
+
+  receiveMessage($event) {
+    this.visibleUpdProdSent = false;
+
+    if($event){
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Salida registrada',
+        showConfirmButton: false,
+        timer: 2000
+      });
+      this.finProductSents();
+    }
+
+  }
 
   ngOnInit() {
     this._httpService.getMeatTypes(10, 0).subscribe((meat_types: MeatType[]) => {
@@ -48,25 +65,36 @@ export class InputsOutputsComponent implements OnInit {
       });
 
       this.meat_types = itemAll.concat(meat_types);
+
       this.getProductsByMeatType(this.meat_types[0].id);
     });
 
-    this.findInputsOutputs();
+    this.finProductSents();
 
     this._branchHttpService.getBranches().subscribe((branches: Branch[]) => {
-      this.branches = branches;
+      this.filterParams.branchId = 0;
+      let itemAll: Branch[] = [];
+      itemAll.push({
+        id: 0,
+        is_deleted: 'N',
+        name: 'Todas',
+        adress: "",
+        is_warehouse: "N"
+      });
+
+      this.branches = itemAll.concat(branches);
     });
   }
 
-  findInputsOutputs(getTotalRows: boolean = true){
-    this._httpService.getInputsOutputs(this.filterParams).subscribe((inputsOutputs: InputsOutputs[]) => {
-      this.inputsOutputs = inputsOutputs;
+  finProductSents(getTotalRows: boolean = true){
+    this._httpService.getProductSents(this.filterParams).subscribe((productSent: ProductSent[]) => {
+      this.producSents = productSent;
     });
 
     if(getTotalRows){
       this.pagesLength = 0;
       this.pages = [];
-      this._httpService.getInputsOutputs(this.filterParams, true).subscribe((data: any[]) => {
+      this._httpService.getProductSents(this.filterParams, true).subscribe((data: any[]) => {
         this.pagesLength = Math.ceil((data[0].TotalRows / this.filterParams.pageSize));
         for(let i = 0; i<this.pagesLength; i++){
           this.pages.push(i+1);
@@ -95,15 +123,10 @@ export class InputsOutputsComponent implements OnInit {
 
       this.products = itemAll.concat(products);
 
-      //this.products = products;
     })
   }
 
   onSubmit(f) {
-     console.log(f.value);
-    // if(f.invalid){
-    //   return false;
-    // }
 
     this.filterParams.pageNum = 0;
     this.filterParams.movType = f.value.movement;
@@ -111,8 +134,10 @@ export class InputsOutputsComponent implements OnInit {
     this.filterParams.productId = f.value.product;
     this.filterParams.iniDate = f.value.dateIni;
     this.filterParams.finDate = f.value.dateFin;
+    console.log(f.value);
+    this.filterParams.branchId = f.value.branchFilter;
 
-    this.findInputsOutputs();
+    this.finProductSents();
   }
 
   pageClass(numPage:number){
@@ -125,19 +150,19 @@ export class InputsOutputsComponent implements OnInit {
 
   changePage(pageNum){
     this.filterParams.pageNum = pageNum - 1;
-    this.findInputsOutputs(false);
+    this.finProductSents(false);
     this.currentPage = pageNum;
   }
 
   nextPage(){
     this.filterParams.pageNum += 1;
-    this.findInputsOutputs(false);
+    this.finProductSents(false);
     this.currentPage += 1;
   }
 
   previousPage(){
     this.filterParams.pageNum -= 1;
-    this.findInputsOutputs(false);
+    this.finProductSents(false);
     this.currentPage -= 1;
   }
 
@@ -157,53 +182,69 @@ export class InputsOutputsComponent implements OnInit {
     }
   }
 
-  deleteInputOutput(id:number): void{
+  deleteProductSent(id:number): void{
+
     Swal.fire({
-      html: 'espere...',
-      title: 'Eliminando registro',
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
+      title: "¿Estás seguro de eliminar?",
+      text: "¡También se eliminará la salida del almacén!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "¡Sí, eliminalo!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+          Swal.fire({
+          html: 'espere...',
+          title: 'Eliminando registro',
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        this._httpService.deleteProductSent(id).subscribe((resp: boolean) => {
+          Swal.close();
+
+          if(resp){
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Registro eliminado',
+              showConfirmButton: false,
+              timer: 2000
+            });
+
+            this.producSents = this.producSents.filter(e=>e.id!==id);
+          }else{
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'Error',
+              html: "Error al eliminar registro",
+              showConfirmButton: false,
+              timer: 2000
+            });
+          }
+        },
+        error => {
+
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error',
+            html: error,
+            showConfirmButton: false,
+            timer: 2000
+          });
+
+        });
+
       }
     });
 
-    this._httpService.deleteInputOutput(id).subscribe((resp: boolean) => {
-      Swal.close();
 
-      if(resp){
-        Swal.fire({
-          position: 'top-end',
-          icon: 'success',
-          title: 'Registro eliminado',
-          showConfirmButton: false,
-          timer: 2000
-        });
-
-        this.inputsOutputs = this.inputsOutputs.filter(e=>e.id!==id);
-      }else{
-        Swal.fire({
-          position: 'top-end',
-          icon: 'error',
-          title: 'Error',
-          html: "Error al eliminar registro",
-          showConfirmButton: false,
-          timer: 2000
-        });
-      }
-    },
-    error => {
-
-      Swal.fire({
-        position: 'top-end',
-        icon: 'error',
-        title: 'Error',
-        html: error,
-        showConfirmButton: false,
-        timer: 2000
-      });
-
-    });
   }
 
   asignarSucursalDestino(id:number): void{
@@ -306,7 +347,7 @@ export class InputsOutputsComponent implements OnInit {
               });
             }
            }else{
-            let output = this.inputsOutputs.find(e=>e.id===id);
+            let output = this.producSents.find(e=>e.id===id);
             this._producSent = {
               id: 0,
               ProductId: output.ProductId,
@@ -318,7 +359,7 @@ export class InputsOutputsComponent implements OnInit {
               status: "P",
               BranchId: Number(_id),
               input_outputId: output.id,
-              branch_name: ""
+              branch_name: output.branch_name
             }
             this._branchHttpService.saveProductSentToBranch(this._producSent).subscribe((resp: any) => {
               Swal.close();
@@ -370,4 +411,8 @@ export class InputsOutputsComponent implements OnInit {
     // }
   }
 
+  setUpdateProductSentId(prodSentId: number): void{
+    this.productSentId = prodSentId;
+    this.visibleUpdProdSent = true;
+  }
 }

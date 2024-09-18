@@ -1,7 +1,4 @@
-//import { Branch } from './../../../models/branch.model';
-import { InputsOutputs } from 'src/app/models/inputs_outputs.model';
-import { Component, Renderer2, OnInit } from '@angular/core';
-//import { HttpService }  from 'src/app/services/http.service';
+import { Component, Renderer2, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MeatType } from "src/app/models/meat_type.model";
 import { Product } from "src/app/models/product.model";
 import { Branch } from "src/app/models/branch.model";
@@ -11,16 +8,28 @@ import { ProductSent } from 'src/app/models/product_sent.model';
 import { HttpService, BranchHttpService }  from 'src/app/services';
 
 @Component({
-  selector: 'app-register-output',
-  templateUrl: './register-output.component.html',
-  styleUrls: ['./register-output.component.scss']
+  selector: 'app-update-productsent',
+  templateUrl: './update-product-sent.component.html',
+  styleUrls: ['./update-product-sent.component.scss']
 })
-export class RegisterOutputComponent implements OnInit {
+export class UpdateProductSentComponent implements OnInit {
+  @Input() productSentId: number;
 
- public meat_types: MeatType[] = [];
+  @Output() messageEvent = new EventEmitter<boolean>();
+
+  sendMessage(saved: boolean) {
+    this.messageEvent.emit(saved);
+  }
+
  public products: Product[] = [];
- public branches: Branch[] = [];
  public target_branches: Branch[] = [];
+
+ public meat_type: MeatType = {
+  id: 0,
+  meat_name: "",
+  is_deleted: ""
+}
+
 
  public product: Product = {
   id: 0,
@@ -38,18 +47,6 @@ export class RegisterOutputComponent implements OnInit {
 
  public pageSize: number = 10;
   public pageNum: number = 0;
-
-  public input_output: InputsOutputs = {
-      id: null,
-      ProductId: 0,
-      kilograms: null,
-      pieces: null,
-      boxes: null,
-      amount: null,
-      date: new Date(),
-      type: "O",
-      BranchId: 0
-     };
 
      public product_sent: ProductSent = {
       id: null,
@@ -95,16 +92,6 @@ export class RegisterOutputComponent implements OnInit {
 
   ngOnInit() {
 
-    this._httpService.getMeatTypes(this.pageSize, this.pageNum).subscribe((meat_types: MeatType[]) => {
-      this.meat_types = meat_types;
-      this.getProductsByMeatType(this.meat_types[0].id);
-    });
-
-    this._httpService.getAllWarehouse().subscribe((branches: Branch[]) => {
-      this.input_output.BranchId = branches[0].id;
-      this.branches = branches;
-    });
-
     this._branchHttpService.getBranches().subscribe((branches: Branch[]) => {
       let branchNoOne : Branch = {
         id: 0,
@@ -116,34 +103,29 @@ export class RegisterOutputComponent implements OnInit {
       this.target_branches.push(
        branchNoOne
       );
-      //this.product_sent.BranchId = branches[0].id;
+
       this.target_branches = this.target_branches.concat(branches);
     });
 
-  }
+    this._httpService.getProductSentById(this.productSentId).subscribe((productSent: ProductSent) => {
+      this.product_sent = productSent;
+      let dateProductSent = productSent.date.toString().split("T")[0].split("-");// new Date(Date.parse(productSent.date.toString()));
+      //console.log(productSent.date);
+      //this.dateString = dateProductSent.getFullYear() + '-' + String(dateProductSent.getMonth() + 1).padStart(2, '0') + '-' + String(dateProductSent.getDate()).padStart(2, '0');
+      this.dateString = dateProductSent[0] + '-' + dateProductSent[1] + '-' + dateProductSent[2];
 
-  getProductsByMeatType(meat_typeId: number): void{
-    this.clearControls();
-    this._httpService.getProductsByMeatType(meat_typeId).subscribe((products: Product[]) => {
-      this.input_output.ProductId = products[0].id;
+      this._httpService.getProductById(productSent.ProductId).subscribe((product: Product) => {
 
-      this.disabledKilograms = !(products[0].by_kilograms=="Y");
-      this.disabledPieces = !(products[0].by_pieces=="Y");
-      this.disabledBoxes = !(products[0].by_boxes=="Y");
+        this.disabledKilograms = !(product.by_kilograms=="Y");
+        this.disabledPieces = !(product.by_pieces=="Y");
+        this.disabledBoxes = !(product.by_boxes=="Y");
+        this.product = product;
 
-      this.product = products[0];
-      this.cleanErrorMsgs();
-
-
-      if(!this.disabledDataCalc){
-        this.previousCalcBy = products[0].calc_by;
-        this.previousPrice = products[0].price;
-        this.setChangeDataCalc(false,true);
-      }
-
-      this.products = products.sort((a, b) => (a.description > b.description) ? 1 : -1);
-      this.setFocus(this.product.by_kilograms, this.product.by_pieces, this.product.by_boxes);
-    })
+        this._httpService.getMeatTypeById(product.meat_typeId).subscribe((meatType: MeatType) => {
+          this.meat_type = meatType;
+        });
+      });
+    });
   }
 
   updateKgByBoxes(kg: number){
@@ -152,108 +134,64 @@ export class RegisterOutputComponent implements OnInit {
   }
 
   clearControls(){
-    this.input_output.amount = null;
-    this.input_output.boxes = null;
-    this.input_output.kilograms = null;
-    this.input_output.pieces = null;
-  }
-
-  getProductByPk(productId: any): void{
-    this.clearControls();
-
-    this._httpService.getProductById(productId).subscribe((product: Product) => {
-      this.disabledKilograms = !(product.by_kilograms=="Y");
-      this.disabledPieces = !(product.by_pieces=="Y");
-      this.disabledBoxes = !(product.by_boxes=="Y");
-
-      this.product = product;
-      this.cleanErrorMsgs();
-
-      if(!this.disabledDataCalc){
-        this.previousCalcBy = product.calc_by;
-        this.previousPrice = product.price;
-        this.setChangeDataCalc(false,true);
-      };
-
-      this.setFocus(product.by_kilograms, product.by_pieces, product.by_boxes);
-    })
+    this.product_sent.amount = null;
+    this.product_sent.boxes = null;
+    this.product_sent.kilograms = null;
+    this.product_sent.pieces = null;
   }
 
   postInputsOutputs(f): void{
+
+    //inico
     Swal.fire({
-      html: 'espere...',
-      title: 'Guardando salida',
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
+      title: "¿Estás seguro de actualizar?",
+      text: "¡También se actualizará la Salida del Almacén!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "¡Sí, actualizalo!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        Swal.fire({
+          html: 'espere...',
+          title: 'Actualizando registro',
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        this._branchHttpService.updateProductSentToBranch(this.product_sent.id, this.product_sent).subscribe((productSent: ProductSent) => {
+
+        Swal.close();
+
+        this.clearControls();
+
+        this.sendMessage(true);
+        },
+        error => {
+
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error',
+            html: error,
+            showConfirmButton: false,
+            timer: 2000
+          });
+
+        }
+        );
+
+
       }
     });
+    //fin
 
-    this.input_output.date = new Date(this.dateString);
-    this._httpService.postInputsOutputs(this.input_output).subscribe((io: InputsOutputs) => {
 
-      //guardar productos enviados
-      if(this.product_sent.BranchId>0){
-        this.saveProductSent(io);
-      }
-      else{
-        Swal.close();
-      }
-
-      this.clearControls();
-
-      Swal.fire({
-        position: 'top-end',
-        icon: 'success',
-        title: 'Salida registrada',
-        showConfirmButton: false,
-        timer: 2000
-      });
-    },
-    error => {
-
-      Swal.fire({
-        position: 'top-end',
-        icon: 'error',
-        title: 'Error',
-        html: error,
-        showConfirmButton: false,
-        timer: 2000
-      });
-
-    }
-    );
-  }
-
-  saveProductSent(io: InputsOutputs){
-
-    this.product_sent.ProductId=this.input_output.ProductId;
-    this.product_sent.kilograms=this.input_output.kilograms;
-    this.product_sent.pieces=this.input_output.pieces;
-    this.product_sent.boxes=this.input_output.boxes;
-    this.product_sent.amount=this.input_output.amount;
-    this.product_sent.date=this.input_output.date;
-    console.log(io);
-    this.product_sent.input_outputId = io.id;
-
-    this._branchHttpService.saveProductSentToBranch(this.product_sent).subscribe((productSent: ProductSent) => {
-
-      //Swal.close();
-
-    },
-    error => {
-
-      Swal.fire({
-        position: 'top-end',
-        icon: 'error',
-        title: 'Error',
-        html: error,
-        showConfirmButton: false,
-        timer: 2000
-      });
-    }
-    );
   }
 
   onSubmit(f) {
@@ -444,12 +382,12 @@ export class RegisterOutputComponent implements OnInit {
   calculateAmount(calcBy, value){
     if(calcBy == this.product.calc_by){
       if(value!=""){
-        this.input_output.amount = value * this.product.price;
+        this.product_sent.amount = value * this.product.price;
       }
     }
 
     if(calcBy=="K" && this.product.by_boxes=="Y" && this.product.kg_by_boxes){
-      this.input_output.boxes = value / this.product.kg_by_boxes;
+      this.product_sent.boxes = value / this.product.kg_by_boxes;
     }
   }
 

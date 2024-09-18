@@ -27,6 +27,7 @@ export class RestartDbComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this._httpService.delAllInputsOutputs().subscribe(() => {
+          this._httpService.delAllProductSents().subscribe(() => {
           this._httpService.delAllStock().subscribe(() => {
             Swal.fire(
               '¡Listo!',
@@ -34,6 +35,7 @@ export class RestartDbComponent implements OnInit {
               'success'
             );
           });
+        });
         });
       }
     })

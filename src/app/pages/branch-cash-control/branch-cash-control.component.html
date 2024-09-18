@@ -83,6 +83,15 @@
                 </a>
               </li>
             </div>
+            <div class="col text-right" >
+              <div class="custom-control custom-control-alternative custom-checkbox">
+                <input *ngIf="item.status=='R'" class="custom-control-input" id="customCheckRegister" type="checkbox" (click)="CambiarEstatus($event.target.checked, item.id)" checked >
+                <input *ngIf="item.status=='P'" class="custom-control-input" id="customCheckRegister" type="checkbox" (click)="CambiarEstatus($event.target.checked, item.id)" >
+                <label class="custom-control-label" for="customCheckRegister">
+                  <span class="text-muted">Marcar como revisado</span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -125,7 +134,7 @@
                   <span class="mb-0 text-sm">{{ (item.calcEntry - item.entry) | currency:'MXN'}}</span>
                 </td>
                 <td class="text-right">
-                  <a href="javascript:void(0)" (click)="getEntryDetails(item.branchId,item.name,item.dateOfCapture)">Ver detalle</a>
+                  <a href="javascript:void(0)" (click)="getEntryDetails(item.branchId,item.name,item.dateOfSale)">Ver detalle</a>
                 </td>
                 <td rowspan="3"  class="text-center">
                   <span>{{item.adicionalInfo}}</span>
@@ -156,7 +165,7 @@
                   <span class="mb-0 text-sm">{{((item.previousResidue + item.calcEntry - item.residue)-item.selled) | currency:'MXN'}}</span>
                 </td>
                 <td class="text-right">
-                  <a href="javascript:void(0)" (click)="getSalesDetails(item.branchId, item.previousResidue, item.calcEntry, item.name, item.dateOfCapture, item.residue, item.selled)">Ver detalle</a>
+                  <a href="javascript:void(0)" (click)="getSalesDetails(item.branchId, item.previousResidue, item.calcEntry, item.name, item.dateOfSale, item.residue, item.selled, item.id)">Ver detalle</a>
                 </td>
               </tr>
               <tr>
@@ -184,7 +193,7 @@
                   <span class="mb-0 text-sm">{{((item.previousResidue + item.calcEntry - item.selled)-item.residue) | currency:'MXN'}}</span>
                 </td>
                 <td class="text-right">
-                  <a href="javascript:void(0)" (click)="getResidueDetails(item.branchId, item.previousResidue, item.calcEntry, item.name, item.dateOfCapture, item.selled, item.residue)">Ver detalle</a>
+                  <a href="javascript:void(0)" (click)="getResidueDetails(item.branchId, item.previousResidue, item.calcEntry, item.name, item.dateOfSale, item.selled, item.residue)">Ver detalle</a>
                 </td>
               </tr>
             </tbody>
@@ -354,14 +363,14 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Ventas de sucursal {{branchName}} el {{dateOfCapture | date: 'EEEE, d MMM, y'}}</h5>
-          <button type="button" class="close" (click)="closeModal('salesModal')" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" *ngIf="!editResidue" (click)="closeModal('salesModal')" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <span *ngIf="productSentLst.length==0" >No hay registros para mostrar</span>
 
-          <div class="table-responsive" *ngIf="productSentLst.length!=0" >
+          <div class="table-responsive" *ngIf="productSentLst.length!=0 && !editSelled" >
             <table class="table align-items-center table-flush">
               <!-- <thead class="thead-light">
                 <tr>
@@ -380,6 +389,16 @@
                   <td ><i _ngcontent-usi-c107="" class="fa fa-minus"></i></td>
                   <td >Venta Reportada</td>
                   <td >{{selled | currency:'MXN'}}</td>
+                  <td class="text-right">
+                    <div ngbDropdown placement="bottom-right">
+                      <a class="btn btn-sm btn-icon-only text-light"  ngbDropdownToggle>
+                        <i class="fas fa-ellipsis-v"></i>
+                      </a>
+                      <div ngbDropdownMenu class=" dropdown-menu-right dropdown-menu-arrow">
+                        <a class="dropdown-item" href="javascript:void(0)" (click)="openEditSelled()">Editar</a>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
                 <tr style="background-color: #f6f9fc;">
                   <td >=</td>
@@ -434,14 +453,46 @@
                   <td>
                     {{residue | currency:'MXN'}}
                   </td>
+
                 </tr>
               </tbody>
             </table>
           </div>
+
+
+          <form  *ngIf="editSelled" novalidate (ngSubmit)="onSubmitEditSelled(frmSelled)" #frmSelled="ngForm">
+            <div class="pl-lg-4">
+              <hr>
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-meat-type">Nuevo Venta Reportada</label>
+                    <input type="number" required="required" min="0.0" [(ngModel)]="newSelled"
+                    name="newSelled" id="newSelled" class="form-control form-control-alternative" placeholder="0" value="" >
+                    <span *ngIf="noValidSelled" class="form-text text-danger">
+                      {{noValidSelledMsg}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-12 text-right">
+                  <button type="button" class="btn btn-secondary btn-sm" (click)="editSelled=false">Cancelar</button>
+                  <button type="submit" class="btn btn-sm btn-primary">
+                    <i _ngcontent-usi-c107="" class="fa fa-check"></i>
+                    Listo
+                  </button>
+                </div>
+              </div>
+              <hr>
+            </div>
+          </form>
+
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm"  (click)="closeModal('salesModal')" data-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary btn-sm" *ngIf="productSentLst.length!=0">Guardar cambios</button>
+          <button type="button" class="btn btn-secondary btn-sm" *ngIf="!editSelled"  (click)="closeModal('salesModal')" data-dismiss="modal">Cerrar</button>
+          <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="productSentLst.length!=0 && !editResidue" (click)="SaveBranchCashControl('R',$event.target)">Guardar cambios</button> -->
         </div>
       </div>
     </div>
@@ -460,7 +511,7 @@
         <div class="modal-body">
           <span *ngIf="productSentLst.length==0" >No hay registros para mostrar</span>
 
-          <div class="table-responsive" *ngIf="productSentLst.length!=0" >
+          <div class="table-responsive" *ngIf="productSentLst.length!=0 && !editResidue" >
             <table class="table align-items-center table-flush">
               <!-- <thead class="thead-light">
                 <tr>
@@ -481,6 +532,16 @@
                   </td>
                   <td>Saldo Reportado</td>
                   <td>{{residue | currency:'MXN'}}</td>
+                  <td class="text-right">
+                    <div ngbDropdown placement="bottom-right">
+                      <a class="btn btn-sm btn-icon-only text-light"  ngbDropdownToggle>
+                        <i class="fas fa-ellipsis-v"></i>
+                      </a>
+                      <div ngbDropdownMenu class=" dropdown-menu-right dropdown-menu-arrow">
+                        <a class="dropdown-item" href="javascript:void(0)" (click)="openEditResidue()">Editar</a>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
                 <tr style="background-color: #f6f9fc;">
                   <td>=</td>
@@ -537,10 +598,40 @@
               </tbody>
             </table>
           </div>
+
+          <form  *ngIf="editResidue" novalidate (ngSubmit)="onSubmitEditResidue(frmResidue)" #frmResidue="ngForm">
+            <div class="pl-lg-4">
+              <hr>
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-meat-type">Nuevo Saldo Reportado</label>
+                    <input type="number" required="required" min="0.0" [(ngModel)]="newResidue"
+                    name="newResidue" id="newResidue" class="form-control form-control-alternative" placeholder="0" value="" >
+                    <span *ngIf="noValidResidue" class="form-text text-danger">
+                      {{noValidResidueMsg}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-12 text-right">
+                  <button type="button" class="btn btn-secondary btn-sm" (click)="editResidue=false">Cancelar</button>
+                  <button type="submit" class="btn btn-sm btn-primary">
+                    <i _ngcontent-usi-c107="" class="fa fa-check"></i>
+                    Listo
+                  </button>
+                </div>
+              </div>
+              <hr>
+            </div>
+          </form>
+
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm"  (click)="closeModal('residueModal')" data-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary btn-sm" *ngIf="productSentLst.length!=0">Guardar cambios</button>
+          <button type="button" class="btn btn-secondary btn-sm" *ngIf="!editResidue"  (click)="closeModal('residueModal')" data-dismiss="modal">Cerrar</button>
+          <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="productSentLst.length!=0">Guardar cambios</button> -->
         </div>
       </div>
     </div>

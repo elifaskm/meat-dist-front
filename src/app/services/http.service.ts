@@ -9,6 +9,7 @@ import { Stock } from "../models/stock.model";
 import { Branch } from '../models/branch.model';
 import { RepByDate } from '../models/rep_by_date';
 import { Configuration } from '../models/configuration.model';
+import { ProductSent } from '../models/product_sent.model';
 
 @Injectable({
   providedIn: "root"
@@ -56,6 +57,10 @@ export class HttpService{
 
   public getMeatTypes(pagesize: number, pagenum: number){
     return this._http.get<MeatType[]>(this.baseUrl + "/meattype?pageSize=" + pagesize + "&pageNum=" + pagenum);
+  }
+
+  public getMeatTypeById(meatTypeId: number){
+    return this._http.get<MeatType>(this.baseUrl + "/meattype/" + meatTypeId);
   }
 
   public getProductsByMeatType(meat_typeId: number){
@@ -133,5 +138,51 @@ export class HttpService{
   public getConfigurationByKey(key: string){
     return this._http.get<Configuration>(this.baseUrl + "/configuration/bykey/" + key);
   }
+
+  public getProductSents(filterParams: any, totalRowsOnly: boolean = false){
+    //pagesize: number, pagenum: number, movType: string, meatType: number, productId: number, iniDate: string, finDate: string
+    let strParams = "pageSize=" + filterParams.pageSize + "&pageNum=" + filterParams.pageNum;
+    if(filterParams.branchId){
+      strParams += "&branchId="+filterParams.branchId;
+    }
+    if(filterParams.meatType > 0){
+      strParams += "&meatType="+filterParams.meatType;
+    }
+    if(filterParams.productId > 0){
+      strParams += "&productId="+filterParams.productId;
+    }
+    if(filterParams.iniDate){
+      strParams += "&iniDate="+filterParams.iniDate.replaceAll("-", "");
+    }
+    if(filterParams.finDate){
+      strParams += "&finDate="+filterParams.finDate.replaceAll("-", "");
+    }
+    if(totalRowsOnly){
+      strParams += "&totalRowsOnly="+totalRowsOnly;
+    }
+
+    return this._http.get<ProductSent[]>(this.baseUrl + "/productsent?" + strParams);
+  }
+
+  public deleteProductSent(id: number){
+    return this._http.delete(this.baseUrl + "/productsent/" + id);
+  }
+
+  public postProductSent(body: any){
+    return this._http.post(this.baseUrl + "/productsent", body);
+  }
+
+  public getProductSentById(productSentId: number){
+    return this._http.get<ProductSent>(this.baseUrl + "/productsent/" + productSentId);
+  }
+
+  public patchProductSent(body: any){
+    return this._http.patch(this.baseUrl + "/productsent", body);
+  }
+
+  public delAllProductSents(){
+    return this._http.delete(this.baseUrl + "/productsent/");
+  }
+
 
 }

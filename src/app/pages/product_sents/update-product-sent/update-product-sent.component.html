@@ -1,0 +1,188 @@
+<!-- <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" >
+
+  <span class="mask bg-gradient-danger opacity-8"></span>
+
+  <div class="container-fluid d-flex align-items-center">
+
+  </div>
+</div> -->
+<div class="container-fluid mt-20">
+  <div class="row">
+    <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+      <div class="card card-profile shadow">
+        <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+          Datos para calcular monto
+        </div>
+        <div class="card-body pt-0 pt-md-4">
+
+          <form novalidate (ngSubmit)="onSubmitDataCalc(frmcalc)" #frmcalc="ngForm">
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-amount">Precio del producto $</label>
+                    <input type="number" required="required" min="0.1" [(ngModel)]="product.price" name="price" id="price"  class="form-control form-control-alternative" placeholder="0.00" value="" [disabled]="disabledDataCalc">
+                    <span *ngIf="noValidPrice" class="form-text text-danger">
+                      {{noValidPriceMsg}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-meat-type">Multiplicado por</label>
+                    <select name="select-meat-type" [(ngModel)]="product.calc_by" class="form-control form-control-alternative" [disabled]="disabledDataCalc" >
+                      <option *ngFor="let cb of ListCalcBy" class="dropdown-item" [value]="cb.key">{{cb.value}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row" *ngIf="!changeDataCalc">
+                <div class="col">
+                  <a href="javascript:void(0);" class="dropdown-item" (click)="setChangeDataCalc(true,false)">
+                    <span>Cambiar datos para calcular</span>
+                  </a>
+                </div>
+              </div>
+              <div class="row" *ngIf="changeDataCalc">
+                <div class="col-lg-12 text-right">
+                  <button type="submit" class="btn btn-sm btn-primary" >
+                    <i _ngcontent-usi-c107="" class="fa fa-save"></i>
+                    Guardar cambios
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-outline-secondary" (click)="setChangeDataCalc(false,true)" >
+                    <span aria-hidden="true">&times;</span>
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+      <br>
+      <app-kg-by-boxes [product]="product" *ngIf="product.by_boxes=='Y'" (newKgEvent)="updateKgByBoxes($event)"></app-kg-by-boxes>
+    </div>
+
+    <div class="col-xl-8 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Modificar producto enviado a sucursal</h3>
+            </div>
+            <div class="col-4 text-right">
+              <a class="btn btn-sm btn-outline-secondary" (click)="sendMessage(false)" >
+                <i _ngcontent-usi-c107="" class="fa fa-arrow-left"></i>
+                Regresar a la lista
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <form novalidate (ngSubmit)="onSubmit(f)" #f="ngForm" >
+            <h6 class="heading-small text-muted mb-4">INFORMACION DEL PRODUCTO</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-meat-type">Tipo de carne</label>
+                    <input type="text" [(ngModel)]="meat_type.meat_name" name="meat_type" id="meat_type" class="form-control form-control-alternative" placeholder="0" value="" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="product">Producto</label>
+                    <input type="text" [(ngModel)]="product.description" name="producto" id="producto" class="form-control form-control-alternative" placeholder="0" value="" readonly>
+                    <!-- <select (change)="getProductByPk($event.target.value)" [(ngModel)]="product_sent.id" name="product" id="product" class="form-control form-control-alternative">
+                      <option *ngFor="let prod of products" class="dropdown-item" [value]="prod.id">{{prod.description}}</option>
+                    </select> -->
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-kilograms">Kilos</label>
+                    <input type="number" required="required" min="0.1" [(ngModel)]="product_sent.kilograms" [disabled]="disabledKilograms" name="kilograms" id="kilograms" class="form-control form-control-alternative" placeholder="0" value=""
+                    (change)="calculateAmount('K', $event.target.value)">
+                    <span *ngIf="noValidKilograms" class="form-text text-danger">
+                      {{noValidKilogramsMsg}}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-pieces">Piezas</label>
+                    <input type="number" required="required" min="0.1" [(ngModel)]="product_sent.pieces" [disabled]="disabledPieces" name="pieces" id="pieces" class="form-control form-control-alternative" placeholder="0" value=""
+                    (change)="calculateAmount('P', $event.target.value)">
+                    <span *ngIf="noValidPieces" class="form-text text-danger">
+                      {{noValidPiecesMsg}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-boxes">Cajas</label>
+                    <input type="number" required="required" min="0.1" [(ngModel)]="product_sent.boxes" [disabled]="disabledBoxes" name="boxes" id="boxes" class="form-control form-control-alternative" placeholder="0" value=""
+                    (change)="calculateAmount('B', $event.target.value)">
+                    <span *ngIf="noValidBoxes" class="form-text text-danger">
+                      {{noValidBoxesMsg}}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-amount">Monto $</label>
+                    <input type="number" required="required" min="0.1" [(ngModel)]="product_sent.amount" name="amount" id="amount"  class="form-control form-control-alternative" placeholder="0.00" value="">
+                    <span *ngIf="noValidAmount" class="form-text text-danger">
+                      {{noValidAmountMsg}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-date">Fecha</label>
+                    <input type="date" required="required" id="date" name="date" [(ngModel)]="dateString" [value]="dateString" class="form-control form-control-alternative" readonly />
+                    <span *ngIf="noValidDate" class="form-text text-danger">
+                      {{noValidDateMsg}}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="branch">Sucursal Destino</label>
+                    <select name="branch" id="branch" [(ngModel)]="product_sent.BranchId" class="form-control form-control-alternative">
+                      <option *ngFor="let branch of target_branches" class="dropdown-item" [value]="branch.id">{{branch.name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+
+                </div>
+                <div class="col-lg-6 text-right mt-5">
+                  <button type="submit" class="btn btn-sm btn-primary" >
+                    <i _ngcontent-usi-c107="" class="fa fa-save"></i>
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

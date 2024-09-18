@@ -5,6 +5,8 @@ import { Branch } from 'src/app/models/branch.model';
 import { BranchCashControl } from 'src/app/models/brach-cash-control.model';
 import { ProductSent } from 'src/app/models/product_sent.model';
 import { Configuration } from 'src/app/models/configuration.model';
+import { ResponseModel } from 'src/app/models/response.model';
+import { log } from 'console';
 
 @Component({
   selector: 'app-inputs-outputs',
@@ -27,6 +29,10 @@ export class BranchCashControlComponent implements OnInit {
   public calcEntry: number = 0;
   public selled: number = 0;
   public residue: number = 0;
+  public productSentId: number = 0;
+
+  public newResidue: number = 0;
+  public newSelled: number = 0;
 
   public noValidDate = false;
   public noValidDateMsg = "";
@@ -39,6 +45,9 @@ export class BranchCashControlComponent implements OnInit {
   public noValidPiecesMsg = "";
   public noValidKilograms = false;
   public noValidKilogramsMsg = "";
+  public noValidResidue = false;
+  public noValidSelled = false;
+  public noValidResidueMsg = "";
 
   public disabledKilograms = false;
   public disabledPieces = false;
@@ -56,6 +65,9 @@ export class BranchCashControlComponent implements OnInit {
 
   private dcurrent = new Date();
   public dateFilterString = this.dcurrent.getFullYear() + '-' + String(this.dcurrent.getMonth() + 1).padStart(2, '0') + '-' + String(this.dcurrent.getDate()).padStart(2, '0');
+
+  public editResidue = false;
+  public editSelled = false;
 
   constructor(public _httpService: HttpService, public _branchHttpService: BranchHttpService, public _branchCashControlHttpService: BranchCashControlHttpService) { }
 
@@ -91,6 +103,14 @@ export class BranchCashControlComponent implements OnInit {
       this.getBranchCashControlLst();
     });
 
+  }
+
+  getGDriveFilesData(){
+    this._branchCashControlHttpService.getDriveFilesData().subscribe((resp: ResponseModel) => {
+      //if (resp!=="OK"){
+        console.log(resp.msg);
+      //}
+    });
   }
 
   getBranchCashControlLst(){
@@ -150,7 +170,7 @@ export class BranchCashControlComponent implements OnInit {
     });
   }
 
-  getSalesDetails(branchId, previousResidue, calcEntry, name, dateOfCapture, residue, selled){
+  getSalesDetails(branchId, previousResidue, calcEntry, name, dateOfCapture, residue, selled, productSentId){
     let filterParams:any = {
       date: dateOfCapture,
       branchId: branchId
@@ -164,6 +184,7 @@ export class BranchCashControlComponent implements OnInit {
       this.calcEntry = calcEntry;
       this.residue = residue;
       this.selled = selled;
+      this.productSentId = productSentId;
 
       this.openModal('salesModal');
     });
@@ -183,6 +204,8 @@ export class BranchCashControlComponent implements OnInit {
       this.calcEntry = calcEntry;
       this.selled = selled;
       this.residue = residue;
+
+
 
       this.openModal('residueModal');
     });
@@ -244,6 +267,9 @@ export class BranchCashControlComponent implements OnInit {
     }
     this.filterParams.status = f.value.estatusFilter ;
 
+  //aqui va el consumo de la api
+  this.getGDriveFilesData();
+
     this.getBranchCashControlLst();
  }
 
@@ -269,9 +295,18 @@ export class BranchCashControlComponent implements OnInit {
   this.editProductSent=true;
  }
 
+ openEditResidue(){
+  this.newResidue = this.residue;
+  this.editResidue=true;
+ }
+
+ openEditSelled(){
+  this.newSelled = this.selled;
+  this.editSelled = true;
+ }
+
  onSubmitEditProductSent(f) {
-console.log(f);
-console.log(f.controls);
+
   if(f.invalid){
     this.validatePieces(f);
     this.validateBoxes(f);
@@ -291,7 +326,77 @@ console.log(f.controls);
   this.productSentLst[objIndex] = this.productSentToEdit;
 
   this.editProductSent=false;
+
+
 }
+
+onSubmitEditResidue(f) {
+
+    if(f.invalid){
+      this.validateResidue(f);
+
+      return false;
+    }
+
+    this.noValidResidue = false;
+
+    this.editResidue = false;
+
+    this.residue = this.newResidue;
+
+    //guardar cambios
+    this.SaveBranchCashControl("R",this.residue);
+  }
+
+  validateResidue(f) {
+    if(f.controls.newResidue.errors && f.controls.newResidue.errors.required){
+      this.noValidResidueMsg = "Este campo es requerido";
+      this.noValidResidue = true;
+      return;
+    }
+    if(f.controls.newResidue.errors && f.controls.renewResidueidue.errors.min){
+      this.noValidResidueMsg = "El valor mínimo es cero";
+      this.noValidResidue = true;
+      return;
+    }
+
+    this.noValidResidue = false;
+    return;
+  }
+
+  onSubmitEditSelled(f) {
+
+    if(f.invalid){
+      this.validateSelled(f);
+
+      return false;
+    }
+
+    this.noValidSelled = false;
+
+    this.editSelled= false;
+
+    this.selled = this.newSelled;
+
+    //guardar cambios
+    this.SaveBranchCashControl("S",this.selled);
+  }
+
+  validateSelled(f) {
+    if(f.controls.newResidue.errors && f.controls.newResidue.errors.required){
+      this.noValidResidueMsg = "Este campo es requerido";
+      this.noValidResidue = true;
+      return;
+    }
+    if(f.controls.newResidue.errors && f.controls.renewResidueidue.errors.min){
+      this.noValidResidueMsg = "El valor mínimo es cero";
+      this.noValidResidue = true;
+      return;
+    }
+
+    this.noValidResidue = false;
+    return;
+  }
 
 validateKilograms(f) {
   if(f.controls.kilograms.errors && f.controls.kilograms.errors.required){
@@ -367,5 +472,41 @@ cleanErrorMsgs(){
   this.noValidKilograms = false;
   this.noValidKilogramsMsg = "";
 }
+
+CambiarEstatus(checked, id){
+  //buscar con el id
+  this._branchCashControlHttpService.getBranchCashControlById(id).subscribe((branchCashControl: BranchCashControl) => {
+    if(checked){
+      branchCashControl.status = "R";
+    }else{
+      branchCashControl.status = "P";
+    }
+
+    this._branchCashControlHttpService.patchBranchCashControl(id, branchCashControl).subscribe((branchCashControl: BranchCashControl) => {
+      console.log("OK");
+    });
+  });
+
+  //update estatus y updated
+}
+
+//inicio guardar saldo
+SaveBranchCashControl(key, value){
+  //buscar con el id
+  this._branchCashControlHttpService.getBranchCashControlById(this.productSentId).subscribe((branchCashControl: BranchCashControl) => {
+    if(key==="R"){
+      branchCashControl.residue = value;
+    }else{
+      branchCashControl.selled = value;
+    }
+
+    this._branchCashControlHttpService.patchBranchCashControl(this.productSentId, branchCashControl).subscribe((branchCashControl: BranchCashControl) => {
+      this.getBranchCashControlLst();
+    });
+  });
+
+  //update estatus y updated
+}
+//fin guardar saldo
 
 }

@@ -10,4 +10,5 @@ export interface ProductSent{
   status: string;
   BranchId: number;
   input_outputId: number;
+  branch_name: string;
 }
