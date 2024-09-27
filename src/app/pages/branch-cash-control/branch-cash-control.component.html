@@ -209,15 +209,17 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Enviado a sucursal {{branchName}} el {{dateOfCapture | date: 'EEEE, d MMM, y'}}</h5>
+          <h5 class="modal-title">Entradas reportadas por la sucursal {{branchName}} el {{dateOfCapture | date: 'EEEE, d MMM, y'}}</h5>
           <button type="button" class="close" (click)="closeModal('entrysModal')" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <span *ngIf="productSentLst.length==0" >No hay registros para mostrar</span>
-
-          <div class="table-responsive" *ngIf="productSentLst.length!=0 && !editProductSent" >
+          <!-- <span *ngIf="productSentLst.length==0" >No hay registros para mostrar</span> -->
+          <span *ngIf="branchProductsEntryLst.length==0" >No hay registros para mostrar</span>
+          <!-- branchProductsEntryLst -->
+          <div class="table-responsive" *ngIf="branchProductsEntryLst.length!=0 && !editProductSent" >
+          <!-- <div class="table-responsive" *ngIf="productSentLst.length!=0 && !editProductSent" > -->
             <table class="table align-items-center table-flush">
               <thead class="thead-light">
                 <tr>
@@ -237,18 +239,19 @@
                 </tr>
               </tfoot>
               <tbody>
-                <tr *ngFor="let item of productSentLst">
+                <!-- <tr *ngFor="let item of productSentLst"> -->
+                  <tr *ngFor="let item of branchProductsEntryLst">
                   <td>
                     <span class="mb-0 text-sm">{{item.description}}</span>
                   </td>
                   <td>
-                    {{item.kilograms}}
+                    {{item.total_kilograms}}
                   </td>
                   <td>
-                    {{item.pieces}}
+                    {{item.total_pieces}}
                   </td>
                   <td>
-                    {{item.boxes}}
+                    {{item.total_boxes}}
                   </td>
                   <td>
                     {{item.amount | currency:'MXN'}}
@@ -273,11 +276,11 @@
               <hr>
               <div class="row">
                 <div class="col-lg-12">
-                  <input type="hidden" id="hdnIdProductSent" value="" [(ngModel)]="productSentToEdit.id">
+                  <input type="hidden" id="hdnIdProductSent" value="" [(ngModel)]="productEntryToEdit.id">
                   <div class="form-group">
                     <label class="form-control-label" for="select-meat-type">Producto</label>
                     <input type="text" required="required" min="0.1" disabled
-                    [(ngModel)]="productSentToEdit.description"
+                    [(ngModel)]="productEntryToEdit.description"
                     name="productoNameEdit" id="productoNameEdit" class="form-control form-control-alternative"
                     placeholder="" value="" >
                   </div>
@@ -288,7 +291,7 @@
                   <div class="form-group">
                     <label class="form-control-label" for="input-kilograms">Kilos</label>
                     <input type="number" required="required" min="0.1"
-                    [(ngModel)]="productSentToEdit.kilograms" [disabled]="disabledKilograms"
+                    [(ngModel)]="productEntryToEdit.total_kilograms" [disabled]="disabledKilograms"
                     name="kilograms" id="kilograms" class="form-control form-control-alternative"
                     placeholder="0" value="" >
                     <span *ngIf="noValidKilograms" class="form-text text-danger">
@@ -300,7 +303,7 @@
                   <div class="form-group">
                     <label class="form-control-label" for="input-pieces">Piezas</label>
                     <input type="number" required="required" min="0.1"
-                    [(ngModel)]="productSentToEdit.pieces" [disabled]="disabledPieces"
+                    [(ngModel)]="productEntryToEdit.total_pieces" [disabled]="disabledPieces"
                     name="pieces" id="pieces" class="form-control form-control-alternative"
                     placeholder="0" value="">
                     <span *ngIf="noValidPieces" class="form-text text-danger">
@@ -314,7 +317,7 @@
                   <div class="form-group">
                     <label class="form-control-label" for="input-boxes">Cajas</label>
                     <input type="number" required="required" min="0.1"
-                    [(ngModel)]="productSentToEdit.boxes" [disabled]="disabledBoxes"
+                    [(ngModel)]="productEntryToEdit.total_boxes" [disabled]="disabledBoxes"
                     name="boxes" id="boxes" class="form-control form-control-alternative"
                     placeholder="0" value="">
                     <span *ngIf="noValidBoxes" class="form-text text-danger">
@@ -326,7 +329,7 @@
                   <div class="form-group">
                     <label class="form-control-label" for="input-amount">Monto $</label>
                     <input type="number" required="required" min="0.1"
-                    [(ngModel)]="productSentToEdit.amount"
+                    [(ngModel)]="productEntryToEdit.amount"
                     name="amount" id="amount"  class="form-control form-control-alternative"
                     placeholder="0.00" value="">
                     <span *ngIf="noValidAmount" class="form-text text-danger">
@@ -350,7 +353,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm" *ngIf="!editProductSent"  (click)="closeModal('entrysModal')" data-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary btn-sm" *ngIf="productSentLst.length!=0 && !editProductSent">Guardar cambios</button>
+          <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="productSentLst.length!=0 && !editProductSent">Guardar cambios</button> -->
+          <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="branchProductsEntryLst.length!=0 && !editProductSent">Guardar cambios</button> -->
           <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="productSentLst.length!=0 && editProductSent" (click)="editProductSent=false">Listo</button> -->
         </div>
       </div>
@@ -368,9 +372,10 @@
           </button>
         </div>
         <div class="modal-body">
-          <span *ngIf="productSentLst.length==0" >No hay registros para mostrar</span>
+          <!-- <span *ngIf="branchProductsEntryLst.length==0" >No hay registros para mostrar</span> -->
 
-          <div class="table-responsive" *ngIf="productSentLst.length!=0 && !editSelled" >
+          <!-- <div class="table-responsive" *ngIf="branchProductsEntryLst.length!=0 && !editSelled" > -->
+            <div class="table-responsive" *ngIf="!editSelled" >
             <table class="table align-items-center table-flush">
               <!-- <thead class="thead-light">
                 <tr>
@@ -509,9 +514,10 @@
           </button>
         </div>
         <div class="modal-body">
-          <span *ngIf="productSentLst.length==0" >No hay registros para mostrar</span>
+          <!-- <span *ngIf="branchProductsEntryLst.length==0" >No hay registros para mostrar</span> -->
 
-          <div class="table-responsive" *ngIf="productSentLst.length!=0 && !editResidue" >
+          <!-- <div class="table-responsive" *ngIf="branchProductsEntryLst.length!=0 && !editResidue" > -->
+            <div class="table-responsive" *ngIf="!editResidue" >
             <table class="table align-items-center table-flush">
               <!-- <thead class="thead-light">
                 <tr>

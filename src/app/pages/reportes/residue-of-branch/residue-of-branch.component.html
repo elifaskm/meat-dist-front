@@ -1,0 +1,182 @@
+<div class="header bg-gradient-danger pb-6 pt-5 pt-md-8">
+
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Saldos en sucursal</h3>
+            </div>
+            <div class="col text-right">
+              <a routerLinkActive="active" href="javascript:void(0);" class="btn btn-sm btn-default" (click)="exportToPDF()">
+                Exportar a PDF
+              </a>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-lg-12">
+              <form novalidate (ngSubmit)="onSubmit(f)" #f="ngForm">
+
+                <div class="row">
+
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label" for="branch">Sucursal</label>
+                      <select name="branch" id="branch" [(ngModel)]="filterParams.branchId" class="form-control form-control-alternative">
+                        <option *ngFor="let branch of branches" class="dropdown-item" [value]="branch.id">{{branch.name}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label" for="meatType">Tipo de carne</label>
+                      <select name="meatType" [(ngModel)]="filterParams.meatType" class="form-control form-control-alternative" (change)="getProductsByMeatType($event.target.value)">
+                        <option *ngFor="let mt of meat_types" class="dropdown-item" [value]="mt.id">{{mt.meat_name}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label" for="product">Producto</label>
+                      <select name="product" id="product" [(ngModel)]="filterParams.productId" class="form-control form-control-alternative">
+                        <option *ngFor="let prod of products" class="dropdown-item" [value]="prod.id">{{prod.description}}</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 text-right">
+                    <br><br>
+                    <button type="submit" class="btn btn-sm btn-primary" >
+                      <i _ngcontent-usi-c107="" class="fa fa-search"></i>
+                      Buscar
+                    </button>
+                  </div>
+
+                </div>
+                <!-- <div class="row">
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-date">Fecha inicial</label>
+                      <input type="date" required="required" id="date" name="date" [(ngModel)]="dateStringIni" [value]="dateStringIni" class="form-control form-control-alternative" />
+                      <span *ngIf="noValidDateIni" class="form-text text-danger">
+                        {{noValidDateMsgIni}}
+                      </span>
+                    </div>
+                  </div>
+                    <div class="col-lg-4">
+                      <div class="form-group">
+                        <label class="form-control-label" for="input-date">Fecha final</label>
+                        <input type="date" required="required" id="date" name="date" [(ngModel)]="dateStringFin" [value]="dateStringFin" class="form-control form-control-alternative" />
+                        <span *ngIf="noValidDateFin" class="form-text text-danger">
+                          {{noValidDateMsgFin}}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-lg-4 text-right">
+                      <br><br>
+                      <button type="submit" class="btn btn-sm btn-primary" >
+                        <i _ngcontent-usi-c107="" class="fa fa-search"></i>
+                        Buscar
+                      </button>
+                    </div>
+                </div> -->
+            </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">PRODUCTO</th>
+                <th scope="col">TIPO</th>
+                <th scope="col">KILOS</th>
+                <th scope="col">PIEZAS</th>
+                <th scope="col">CAJAS</th>
+                <th scope="col">MONTO</th>
+                <th scope="col">FECHA ACTUALIZACION</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr class="bg-gray">
+                <td colspan="5" class="text-white"><b>Total</b></td>
+                <td class="text-white">
+                  <b>{{getTotalInput() | currency:'MXN'}} </b>
+                </td>
+                <td class="text-white">&nbsp;</td>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr *ngFor="let data of repStockResidue">
+                <td>
+                  <span class="mb-0 text-sm">{{data.Product}}</span>
+                </td>
+                <td>
+                  {{data.MeatType}}
+                </td>
+                <td>
+                  <div *ngIf="data.KilogramsInput">
+                    {{data.KilogramsInput}}
+                  </div>
+                </td>
+                <td>
+                  <div *ngIf="data.PiecesInput">
+                    {{data.PiecesInput}}
+                  </div>
+                </td>
+                <td>
+                  <div *ngIf="data.BoxesInput">
+                    {{data.BoxesInput}}
+                </div>
+                </td>
+                <td>
+                  <div *ngIf="data.AmountInput">
+                    {{data.AmountInput | currency:'MXN'}}
+                  </div>
+                </td>
+                <td>
+                  <div *ngIf="data.LastUpdate">
+                    {{data.LastUpdate | date:"dd/MM/yyyy hh:mm:ss"}}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4">
+          <nav aria-label="...">
+            <ul class="pagination justify-content-end mb-0">
+              <li class="page-item disabled">
+                <a class="page-link" href="javascript:void(0)" tabindex="-1">
+                  <i class="fas fa-angle-left"></i>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              <!-- <li class="page-item active">
+                <a class="page-link" href="javascript:void(0)">1</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="javascript:void(0)">2 <span class="sr-only">(current)</span></a>
+              </li> -->
+              <li class="page-item disabled" *ngFor="let numPage of pages"><a class="page-link" href="javascript:void(0)">{{numPage}}</a></li>
+              <li class="page-item disabled">
+                <a class="page-link" href="javascript:void(0)">
+                  <i class="fas fa-angle-right"></i>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

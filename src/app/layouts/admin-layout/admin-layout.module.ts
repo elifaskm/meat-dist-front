@@ -23,6 +23,7 @@ import { KgByBoxesComponent } from '../../pages/inputs_outputs/kg-by-boxes/kg-by
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BranchCashControlComponent } from '../../pages/branch-cash-control/branch-cash-control.component';
 import { ProductSentsComponent } from '../../pages/product_sents/product_sents.component';
+import { ResidueOfBranchComponent } from '../../pages/reportes/residue-of-branch/residue-of-branch.component';
 
 
 @NgModule({
@@ -50,7 +51,8 @@ import { ProductSentsComponent } from '../../pages/product_sents/product_sents.c
     KgByBoxesComponent,
     BranchCashControlComponent,
     ProductSentsComponent,
-    UpdateProductSentComponent
+    UpdateProductSentComponent,
+    ResidueOfBranchComponent
   ]
 })
 

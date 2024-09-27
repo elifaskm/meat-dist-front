@@ -17,6 +17,7 @@ import { RestartDbComponent } from '../../pages/restart-db/restart-db.component'
 import { BranchCashControlComponent } from '../../pages/branch-cash-control/branch-cash-control.component';
 import { isAuthenticatedGuard } from 'src/app/guards';
 import { UpdateProductSentComponent } from '../../pages/product_sents/update-product-sent/update-product-sent.component';
+import { ResidueOfBranchComponent } from '../../pages/reportes/residue-of-branch/residue-of-branch.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -35,4 +36,5 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'totals-by-date', canActivate: [isAuthenticatedGuard],      component: TotalsByDateComponent },
     { path: 'restart-db', canActivate: [isAuthenticatedGuard],      component: RestartDbComponent },
     { path: 'update-product-sent', canActivate: [isAuthenticatedGuard],      component: UpdateProductSentComponent },
+    { path: 'residue-of-branch', canActivate: [isAuthenticatedGuard],      component: ResidueOfBranchComponent },
 ];

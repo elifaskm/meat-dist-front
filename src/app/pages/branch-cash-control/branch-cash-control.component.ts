@@ -7,6 +7,8 @@ import { ProductSent } from 'src/app/models/product_sent.model';
 import { Configuration } from 'src/app/models/configuration.model';
 import { ResponseModel } from 'src/app/models/response.model';
 import { log } from 'console';
+import { BranchProductsEntry } from 'src/app/models/branch-products-entry.model';
+import { Product } from 'src/app/models/product.model';
 
 @Component({
   selector: 'app-inputs-outputs',
@@ -18,6 +20,7 @@ export class BranchCashControlComponent implements OnInit {
   public branches: Branch[];
   public branchCashControlLst: BranchCashControl[];
   public productSentLst: ProductSent[] = [];
+  public branchProductsEntryLst: BranchProductsEntry[] = [];
   public collapsedBranchItemLst: any[];
   public isCollapsedAll:boolean=true;
   public semaphoreConf: any;
@@ -60,7 +63,8 @@ export class BranchCashControlComponent implements OnInit {
   }
 
   public editProductSent = false;
-  public productSentToEdit : ProductSent;
+  //public productSentToEdit : ProductSent;
+  public productEntryToEdit : BranchProductsEntry;
   public branchCashControlToEdit : BranchCashControl;
 
   private dcurrent = new Date();
@@ -156,14 +160,29 @@ export class BranchCashControlComponent implements OnInit {
 
 
   getEntryDetails(branchId, name, dateOfCapture){
+    this.editProductSent=false;
     //buscar la lista de salidas envíadas y mostrarlo en pantalla
     let filterParams:any = {
       date: dateOfCapture,
       branchId: branchId
     }
 
-    this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
-      this.productSentLst = productSentLst;
+    let params:any = {
+      dateOfCapture: dateOfCapture,
+      branchId: branchId
+    }
+    this._branchCashControlHttpService.getFullBranchCashControl(params).subscribe((branchCashControlLst: BranchCashControl[]) => {
+      this.branchCashControlToEdit = branchCashControlLst[0];
+    });
+
+    // this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
+    //   this.productSentLst = productSentLst;
+    //   this.branchName = name;
+    //   this.dateOfCapture = dateOfCapture;
+    //   this.openModal('entrysModal');
+    // });
+    this._branchCashControlHttpService.getBranchProductsEntry(filterParams).subscribe((branchProductsEntryLst: BranchProductsEntry[]) => {
+      this.branchProductsEntryLst = branchProductsEntryLst;
       this.branchName = name;
       this.dateOfCapture = dateOfCapture;
       this.openModal('entrysModal');
@@ -171,13 +190,27 @@ export class BranchCashControlComponent implements OnInit {
   }
 
   getSalesDetails(branchId, previousResidue, calcEntry, name, dateOfCapture, residue, selled, productSentId){
+
+    let params:any = {
+      dateOfCapture: dateOfCapture,
+      branchId: branchId
+    }
+
+
+    this._branchCashControlHttpService.getFullBranchCashControl(params).subscribe((branchCashControlLst: BranchCashControl[]) => {
+      this.branchCashControlToEdit = branchCashControlLst[0];
+    });
+
     let filterParams:any = {
       date: dateOfCapture,
       branchId: branchId
     }
 
-    this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
-      this.productSentLst = productSentLst;
+    //this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
+    this._branchCashControlHttpService.getBranchProductsEntry(filterParams).subscribe((branchProductsEntryLst: BranchProductsEntry[]) => {
+      //this.productSentLst = productSentLst;
+      this.branchProductsEntryLst = branchProductsEntryLst;
+      console.log(branchProductsEntryLst);
       this.branchName = name;
       this.dateOfCapture = dateOfCapture;
       this.previousResidue = previousResidue;
@@ -191,13 +224,26 @@ export class BranchCashControlComponent implements OnInit {
   }
 
   getResidueDetails(branchId, previousResidue, calcEntry, name, dateOfCapture, selled, residue){
+
+    let params:any = {
+      dateOfCapture: dateOfCapture,
+      branchId: branchId
+    }
+
+    this._branchCashControlHttpService.getFullBranchCashControl(params).subscribe((branchCashControlLst: BranchCashControl[]) => {
+      this.branchCashControlToEdit = branchCashControlLst[0];
+    });
+
     let filterParams:any = {
       date: dateOfCapture,
       branchId: branchId
     }
 
-    this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
-      this.productSentLst = productSentLst;
+    //this._branchCashControlHttpService.getProductSentForBranch(filterParams).subscribe((productSentLst: ProductSent[]) => {
+    this._branchCashControlHttpService.getBranchProductsEntry(filterParams).subscribe((branchProductsEntryLst: BranchProductsEntry[]) => {
+      //this.productSentLst = productSentLst;
+      this.branchProductsEntryLst = branchProductsEntryLst;
+      console.log(branchProductsEntryLst);
       this.branchName = name;
       this.dateOfCapture = dateOfCapture;
       this.previousResidue = previousResidue;
@@ -213,7 +259,10 @@ export class BranchCashControlComponent implements OnInit {
 
   getTotalEntrys():number{
 
-    const sum = this.productSentLst.reduce((accumulator, value) => {
+    // const sum = this.productSentLst.reduce((accumulator, value) => {
+    //   return Number(accumulator) + Number(value.amount);
+    // }, 0);
+    const sum = this.branchProductsEntryLst.reduce((accumulator, value) => {
       return Number(accumulator) + Number(value.amount);
     }, 0);
 
@@ -284,15 +333,33 @@ export class BranchCashControlComponent implements OnInit {
 //  Productos enviados
  openEditProductSent(id, selled, residue){
   //obtener datos de registro
-  this.productSentToEdit = this.productSentLst.find(x=>x.id==id);
+  //this.productSentToEdit = this.productSentLst.find(x=>x.id==id);
+  this.productEntryToEdit = this.branchProductsEntryLst.find(x=>x.id==id);
 
-  this.disabledBoxes = this.productSentToEdit.boxes == null;
-  this.disabledKilograms = this.productSentToEdit.kilograms == null;
-  this.disabledPieces = this.productSentToEdit.pieces == null;
+  // this.disabledBoxes = this.productSentToEdit.boxes == null;
+  // this.disabledKilograms = this.productSentToEdit.kilograms == null;
+  // this.disabledPieces = this.productSentToEdit.pieces == null;
 
   //ceder datos a formulario
-  this.branchCashControlToEdit = null;
+  //this.branchCashControlToEdit = null;
+
+  // let params:any = {
+  //   dateOfCapture: this.productEntryToEdit.dateOfCapture.toString().split("T")[0],
+  //   branchId: this.productEntryToEdit.BranchId,
+  //   status: null
+  // }
+  // this._branchCashControlHttpService.getFullBranchCashControl(params).subscribe((branchCashControlLst: BranchCashControl[]) => {
+  //   this.branchCashControlToEdit = branchCashControlLst[0];
+  // });
+
+  this._httpService.getProductById(this.productEntryToEdit.productId).subscribe((product: Product) => {
+    this.disabledKilograms = !(product.by_kilograms=="Y");
+    this.disabledPieces = !(product.by_pieces=="Y");
+    this.disabledBoxes = !(product.by_boxes=="Y");
+  });
+
   this.editProductSent=true;
+
  }
 
  openEditResidue(){
@@ -322,11 +389,19 @@ export class BranchCashControlComponent implements OnInit {
   this.noValidAmount = false;
 
   //llamar a setear valores en lista y que se refeleje en grid
-  let objIndex = this.productSentLst.findIndex(x=>x.id==this.productSentToEdit.id);
-  this.productSentLst[objIndex] = this.productSentToEdit;
+  //let objIndex = this.productSentLst.findIndex(x=>x.id==this.productSentToEdit.id);
+  let objIndex = this.branchProductsEntryLst.findIndex(x=>x.id==this.productEntryToEdit.id);
+  this.branchProductsEntryLst[objIndex] = this.productEntryToEdit;
+
+  this.branchCashControlToEdit.entry = this.getTotalEntrys();
+
+  this._branchCashControlHttpService.patchBranchCashControl(this.branchCashControlToEdit.id, this.branchCashControlToEdit).subscribe((branchCashControl: BranchCashControl) => {
+    this._branchCashControlHttpService.patchBranchProductEntry(this.productEntryToEdit.id, this.productEntryToEdit).subscribe((branchProductsEntry: BranchProductsEntry) => {
+      this.getBranchCashControlLst();
+    });
+  });
 
   this.editProductSent=false;
-
 
 }
 
@@ -399,12 +474,12 @@ onSubmitEditResidue(f) {
   }
 
 validateKilograms(f) {
-  if(f.controls.kilograms.errors && f.controls.kilograms.errors.required){
+  if(f.controls.total_kilograms.errors && f.controls.total_kilograms.errors.required){
     this.noValidKilogramsMsg = "Este campo es requerido";
     this.noValidKilograms=true;
     return;
   }
-  if(f.controls.pieces.errors && f.controls.pieces.errors.min){
+  if(f.controls.total_pieces.errors && f.controls.total_pieces.errors.min){
     this.noValidKilogramsMsg = "El valor debe ser mayor a cero";
     this.noValidKilograms=true;
     return;
@@ -415,12 +490,12 @@ validateKilograms(f) {
 }
 
 validatePieces(f) {
-  if(f.controls.pieces.errors && f.controls.pieces.errors.required){
+  if(f.controls.total_pieces.errors && f.controls.total_pieces.errors.required){
     this.noValidPiecesMsg = "Este campo es requerido";
     this.noValidPieces=true;
     return;
   }
-  if(f.controls.pieces.errors && f.controls.pieces.errors.min){
+  if(f.controls.total_pieces.errors && f.controls.total_pieces.errors.min){
     this.noValidPiecesMsg = "El valor debe ser mayor a cero";
     this.noValidPieces=true;
     return;
@@ -431,12 +506,12 @@ validatePieces(f) {
 }
 
 validateBoxes(f) {
-  if(f.controls.boxes.errors && f.controls.boxes.errors.required){
+  if(f.controls.total_boxes.errors && f.controls.total_boxes.errors.required){
     this.noValidBoxesMsg = "Este campo es requerido";
     this.noValidBoxes=true;
     return;
   }
-  if(f.controls.boxes.errors && f.controls.boxes.errors.min){
+  if(f.controls.total_boxes.errors && f.controls.total_boxes.errors.min){
     this.noValidBoxesMsg = "El valor debe ser mayor a cero";
     this.noValidBoxes=true;
     return;
@@ -493,14 +568,14 @@ CambiarEstatus(checked, id){
 //inicio guardar saldo
 SaveBranchCashControl(key, value){
   //buscar con el id
-  this._branchCashControlHttpService.getBranchCashControlById(this.productSentId).subscribe((branchCashControl: BranchCashControl) => {
+  this._branchCashControlHttpService.getBranchCashControlById(this.branchCashControlToEdit.id).subscribe((branchCashControl: BranchCashControl) => {
     if(key==="R"){
       branchCashControl.residue = value;
     }else{
       branchCashControl.selled = value;
     }
 
-    this._branchCashControlHttpService.patchBranchCashControl(this.productSentId, branchCashControl).subscribe((branchCashControl: BranchCashControl) => {
+    this._branchCashControlHttpService.patchBranchCashControl(this.branchCashControlToEdit.id, branchCashControl).subscribe((branchCashControl: BranchCashControl) => {
       this.getBranchCashControlLst();
     });
   });

@@ -10,6 +10,7 @@ import { Branch } from '../models/branch.model';
 import { RepByDate } from '../models/rep_by_date';
 import { Configuration } from '../models/configuration.model';
 import { ProductSent } from '../models/product_sent.model';
+import { RepStockResidue } from '../models/rep_stock_residue';
 
 @Injectable({
   providedIn: "root"
@@ -90,6 +91,10 @@ export class HttpService{
     return this._http.get<Branch[]>(this.baseUrl + "/branch/iswarehouse/Y");
   }
 
+  public getAllBranches(){
+    return this._http.get<Branch[]>(this.baseUrl + "/branch/iswarehouse/N");
+  }
+
   public getRepByDate(filterParams: any){
     let strParams = "";
     if(filterParams.branchId){
@@ -109,6 +114,27 @@ export class HttpService{
     }
 
     return this._http.get<RepByDate[]>(this.baseUrl + "/inputsoutputs/report/bydaterange?" + strParams);
+  }
+
+  public getRepResidueOfBranch(filterParams: any){
+    let strParams = "";
+    if(filterParams.branchId){
+      strParams += "&branchId="+filterParams.branchId;
+    }
+    if(filterParams.meatType){
+      strParams += "&meatTypeId="+filterParams.meatType;
+    }
+    if(filterParams.productId){
+      strParams += "&productId="+filterParams.productId;
+    }
+    if(filterParams.iniDate){
+      strParams += "&iniDate="+filterParams.iniDate.replaceAll("-", "");
+    }
+    if(filterParams.finDate){
+      strParams += "&finDate="+filterParams.finDate.replaceAll("-", "");
+    }
+
+    return this._http.get<RepStockResidue[]>(this.baseUrl + "/branchresidue/report/stockresidue?" + strParams);
   }
 
   public deleteInputOutput(id: number){
