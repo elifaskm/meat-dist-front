@@ -191,6 +191,21 @@ export class RegisterOutputComponent implements OnInit {
     });
 
     this.input_output.date = new Date(this.dateString);
+
+     //poner ceros
+     if(!this.input_output.kilograms){
+      this.input_output.kilograms = 0;
+    }
+
+    if(!this.input_output.pieces){
+      this.input_output.pieces = 0;
+    }
+
+    if(!this.input_output.boxes){
+      this.input_output.boxes = 0;
+    }
+    //fin ceros
+
     this._httpService.postInputsOutputs(this.input_output).subscribe((io: InputsOutputs) => {
 
       //guardar productos enviados

@@ -11,7 +11,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/dashboard', title: 'Inicio',  icon: 'ni-tv-2 text-primary', class: '' },
     { path: '/inputs_outputs', title: 'Entradas y Salidas de Almacen',  icon:'ni-bullet-list-67 text-red', class: '' },
     { path: '/product_sent', title: 'Productos Enviados a Sucursal',  icon:'ni-send text-yellow', class: '' },
-    { path: '/branch-cash-control', title: 'Control de Caja en Sucursales',  icon:'ni-money-coins text-green', class: '' },
+    { path: '/branch-cash-control', title: 'Control de Inventario en Sucursales',  icon:'ni-money-coins text-green', class: '' },
     { path: '/reportes', title: 'Reportes',  icon:'ni-archive-2 text-info', class: '' },
     { path: '/restart-db', title: 'Reiniciar Base de Datos',  icon:'ni-curved-next text-warning', class: '' },
     //{ path: '/icons', title: 'Icons',  icon:'ni-planet text-blue', class: '' },

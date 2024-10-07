@@ -78,7 +78,7 @@
             <tfoot>
               <tr class="bg-gray">
                 <td colspan="5" class="text-white"><b>Total</b></td>
-                <td class="text-white"><b>{{getTotal() | currency}}</b></td>
+                <td class="text-white"><b>{{getTotal() | currency:'MXN'}}</b></td>
               </tr>
             </tfoot>
             <tbody>
@@ -99,7 +99,7 @@
                   {{stock.total_boxes}}
                 </td>
                 <td>
-                  {{stock.amount | currency}}
+                  {{stock.amount | currency:'MXN'}}
                 </td>
               </tr>
             </tbody>

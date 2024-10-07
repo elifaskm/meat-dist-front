@@ -101,7 +101,7 @@
                   <span class="badge badge-dot text-success">
                     <i class="fas fa-arrow-up"></i>
                   </span>
-                  <b>{{getTotalInput() | currency}} | {{getTotalOutput() | currency}} </b>
+                  <b>{{getTotalInput() | currency:'MXN'}} | {{getTotalOutput() | currency:'MXN'}} </b>
                   <span class="badge badge-dot text-warning">
                     <i class="fas fa-arrow-down"></i>
                   </span>
@@ -154,7 +154,7 @@
                     <span class="badge badge-dot text-success">
                       <i class="fas fa-arrow-up"></i>
                     </span>
-                    {{data.AmountInput | currency}} |  {{data.AmountOutput | currency}}
+                    {{data.AmountInput | currency:'MXN'}} |  {{data.AmountOutput | currency:'MXN'}}
                     <span class="badge badge-dot text-warning">
                       <i class="fas fa-arrow-down"></i>
                     </span>

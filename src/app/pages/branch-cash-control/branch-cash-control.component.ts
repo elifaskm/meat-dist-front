@@ -9,6 +9,7 @@ import { ResponseModel } from 'src/app/models/response.model';
 import { log } from 'console';
 import { BranchProductsEntry } from 'src/app/models/branch-products-entry.model';
 import { Product } from 'src/app/models/product.model';
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-inputs-outputs',
@@ -122,7 +123,7 @@ export class BranchCashControlComponent implements OnInit {
     this._branchCashControlHttpService.getFullBranchCashControl(this.filterParams).subscribe((branchCashControlLst: BranchCashControl[]) => {
 
       branchCashControlLst.forEach((value) => {
-        const diffEntry = value.entry - value.calcEntry;
+        const diffEntry = Math.abs(value.entry - value.calcEntry);
 
         if(diffEntry<=this.semaphoreConf.green.lessthanorequal){
           value.semaphoreEntry = "green";
@@ -132,7 +133,7 @@ export class BranchCashControlComponent implements OnInit {
           value.semaphoreEntry = "red";
         }
 
-        const diffSales = value.selled - (value.previousResidue + value.calcEntry - value.residue);
+        const diffSales = Math.abs(value.selled - (value.previousResidue + value.calcEntry - value.residue));
 
         if(diffSales<=this.semaphoreConf.green.lessthanorequal){
           value.semaphoreSales = "green";
@@ -142,7 +143,8 @@ export class BranchCashControlComponent implements OnInit {
           value.semaphoreSales = "red";
         }
 
-        const diffResidue = value.selled - (value.previousResidue + value.calcEntry - value.residue);
+//        const diffResidue = value.selled - (value.previousResidue + value.calcEntry - value.residue);
+        const diffResidue = Math.abs(value.residue - (value.previousResidue + value.calcEntry - value.selled));
 
         if(diffResidue<=this.semaphoreConf.green.lessthanorequal){
           value.semaphoreResidue = "green";
@@ -155,6 +157,8 @@ export class BranchCashControlComponent implements OnInit {
       });
 
       this.branchCashControlLst = branchCashControlLst;
+
+      Swal.close();
     });
   }
 
@@ -315,6 +319,16 @@ export class BranchCashControlComponent implements OnInit {
       this.filterParams.branchId = null;
     }
     this.filterParams.status = f.value.estatusFilter ;
+
+    Swal.fire({
+      html: 'espere...',
+      title: 'Buscando información',
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
 
   //aqui va el consumo de la api
   this.getGDriveFilesData();
