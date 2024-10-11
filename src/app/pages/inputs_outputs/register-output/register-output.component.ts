@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { listCalcBy } from './../../../models/calc_by.model';
 import { ProductSent } from 'src/app/models/product_sent.model';
 import { HttpService, BranchHttpService }  from 'src/app/services';
+import { Stock } from "src/app/models/stock.model";
 
 @Component({
   selector: 'app-register-output',
@@ -288,7 +289,76 @@ export class RegisterOutputComponent implements OnInit {
     this.noValidBoxes = false;
     this.noValidAmount = false;
 
-    this.postInputsOutputs(f);
+    //buscar kilos y piezas y xcajas
+    let filterParams:any = {
+      meatType: null,
+      productId: this.input_output.ProductId,
+      branchId: this.input_output.BranchId
+    }
+
+
+
+      this._httpService.getFullStock(filterParams).subscribe((stocks: Stock[]) => {
+        if(stocks.length<1){
+          let stock:Stock = {
+            id_product : 0,
+            description : "",
+            total_pieces : 0,
+            total_kilograms : 0,
+            total_boxes : 0,
+            meat_name:"",
+            branch_name:"",
+            amount:0
+          };
+          stocks.push(stock);
+        }
+
+        if(this.input_output.kilograms > stocks[0].total_kilograms){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error',
+            html: "Stock insuficiente"+". Quedan "+stocks[0].total_kilograms + " kilos.",
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          return false;
+        }
+
+        if(this.input_output.pieces > stocks[0].total_pieces){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error',
+            html: "Stock insuficiente"+". Quedan "+stocks[0].total_pieces + " piezas.",
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          return false;
+        }
+
+        if(this.input_output.boxes > stocks[0].total_boxes){
+          Swal.fire({
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error',
+            html: "Stock insuficiente"+". Quedan "+stocks[0].total_boxes + " cajas.",
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          return false;
+        }
+
+        this.postInputsOutputs(f);
+      });
+
+
+    //si se pasa mostray mensaje
+
+    //this.postInputsOutputs(f);
   }
 
   validateDate(f) {
