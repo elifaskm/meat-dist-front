@@ -1,3 +1,4 @@
+import { Branch } from './../../models/branch.model';
 import { ProductSentsComponent } from './../../pages/product_sents/product_sents.component';
 import { ProductSent } from './../../models/product_sent.model';
 import { Routes } from '@angular/router';
@@ -18,6 +19,14 @@ import { BranchCashControlComponent } from '../../pages/branch-cash-control/bran
 import { isAuthenticatedGuard } from 'src/app/guards';
 import { UpdateProductSentComponent } from '../../pages/product_sents/update-product-sent/update-product-sent.component';
 import { ResidueOfBranchComponent } from '../../pages/reportes/residue-of-branch/residue-of-branch.component';
+import { BranchesComponent } from '../../pages/catalogs/branches/branches.component';
+import { UpdateBranchesComponent } from '../../pages/catalogs/branches/update-branches/update-branches.component';
+import { CatalogsComponent } from '../../pages/catalogs/catalogs.component';
+import { UpdateProductsComponent } from '../../pages/catalogs/products/update-products/update-products.component';
+import { InsertBranchesComponent } from '../../pages/catalogs/branches/insert-branches/insert-branches.component';
+import { InsertProductsComponent } from '../../pages/catalogs/products/insert-products/insert-products.component';
+import { ProductsComponent } from '../../pages/catalogs/products/products.component';
+import { ConfigurationComponent } from '../../pages/configuration/configuration.component';
 
 
 export const AdminLayoutRoutes: Routes = [
@@ -37,4 +46,12 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'restart-db', canActivate: [isAuthenticatedGuard],      component: RestartDbComponent },
     { path: 'update-product-sent', canActivate: [isAuthenticatedGuard],      component: UpdateProductSentComponent },
     { path: 'residue-of-branch', canActivate: [isAuthenticatedGuard],      component: ResidueOfBranchComponent },
+    { path: 'branches', canActivate: [isAuthenticatedGuard],      component: BranchesComponent },
+    { path: 'update-branches', canActivate: [isAuthenticatedGuard],      component: UpdateBranchesComponent },
+    { path: 'catalogs', canActivate: [isAuthenticatedGuard],      component: CatalogsComponent },
+    { path: 'insert-branches', canActivate: [isAuthenticatedGuard],      component: InsertBranchesComponent },
+    { path: 'update-products', canActivate: [isAuthenticatedGuard],      component: UpdateProductsComponent },
+    { path: 'insert-products', canActivate: [isAuthenticatedGuard],      component: InsertProductsComponent },
+    { path: 'products', canActivate: [isAuthenticatedGuard],      component: ProductsComponent },
+    { path: 'configuration', canActivate: [isAuthenticatedGuard],      component: ConfigurationComponent }
 ];

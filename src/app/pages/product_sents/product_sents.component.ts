@@ -78,7 +78,7 @@ export class ProductSentsComponent implements OnInit {
         id: 0,
         is_deleted: 'N',
         name: 'Todas',
-        adress: "",
+        address: "",
         is_warehouse: "N"
       });
 

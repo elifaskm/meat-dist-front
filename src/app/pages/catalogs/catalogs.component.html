@@ -1,0 +1,44 @@
+<div class="header bg-gradient-danger pb-6 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body">
+
+    </div>
+  </div>
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <h3 class="mb-0">Catálogos</h3>
+        </div>
+        <div class="card-body">
+          <div class="row icon-examples">
+
+            <div class="col-lg-4 col-md-6">
+              <button type="button" [routerLink]="['/products']" placement="top-center" triggers="hover focus click" ngbTooltip="{{copy === 'cart' ? 'Copied':'Copy to clipboard'}}"  class="btn-icon-clipboard" ngxClipboard [cbContent]="'cart'" (cbOnSuccess) = "copy = 'cart'">
+                <div>
+                  <i class="ni ni-cart"></i>
+                  <span>Productos</span>
+                </div>
+              </button>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+              <button type="button" [routerLink]="['/branches']" placement="top-center" triggers="hover focus click" ngbTooltip="{{copy === 'shop' ? 'Copied':'Copy to clipboard'}}"  class="btn-icon-clipboard" ngxClipboard [cbContent]="'shop'" (cbOnSuccess) = "copy = 'shop'">
+                <div>
+                  <i class="ni ni-shop"></i>
+                  <span>Sucursales</span>
+                </div>
+              </button>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

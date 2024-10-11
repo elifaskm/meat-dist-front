@@ -35,4 +35,30 @@ export class BranchHttpService{
     return this._http.delete(this.baseUrl + "/productsent/"+id.toString());
   }
 
+  public findBranches(filterParams: any, totalRowsOnly: boolean = false){
+    //pagesize: number, pagenum: number, movType: string, meatType: number, productId: number, iniDate: string, finDate: string
+    let strParams = "pageSize=" + filterParams.pageSize + "&pageNum=" + filterParams.pageNum;
+    if(filterParams.branchId){
+      strParams += "&branchId="+filterParams.branchId;
+    }
+
+    if(totalRowsOnly){
+      strParams += "&totalRowsOnly="+totalRowsOnly;
+    }
+
+    return this._http.get<Branch[]>(this.baseUrl + "/branch?" + strParams);
+  }
+
+  public getBranchId(branchId: number){
+    return this._http.get<Branch>(this.baseUrl + "/branch/" + branchId);
+  }
+
+  public updateBranch(id:number, body: any){
+    return this._http.patch(this.baseUrl + "/branch/"+id.toString(), body);
+  }
+
+  public insertBranch(body: any){
+    return this._http.post(this.baseUrl + "/branch", body);
+  }
+
 }

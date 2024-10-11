@@ -1,0 +1,146 @@
+<div class="header bg-gradient-danger pb-6 pt-5 pt-md-8">
+
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row" *ngIf="visibleUpdProduct==false && visibleInsProduct==false">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+
+          <div class="row align-items-center" *ngIf="visibleFilters==false">
+            <div class="col">
+              <button class="btn btn-sm btn-primary" (click)="visibleFilters=true">Filtros de búsqueda</button>
+            </div>
+            <div class="col text-right">
+               <!-- <a routerLinkActive="active" [routerLink]="['/register-branch']" class="btn btn-sm btn-outline-success ">
+                Agregar sucursal
+              </a> -->
+              <button class="btn btn-sm bg-success" (click)="visibleInsProduct=true">Agregar producto</button>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="visibleFilters==true">
+            <div class="col-lg-12">
+              <form novalidate (ngSubmit)="onSubmit(f)" #f="ngForm">
+
+                <div class="row">
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label" for="meatTypeFilter">Tipo de carne</label>
+                      <select name="meatTypeFilter" [(ngModel)]="filterParams.meatTypeId" class="form-control form-control-alternative" (change)="getProductsByMeatType($event.target.value)">
+                        <option *ngFor="let b of _meatTypesFilter" class="dropdown-item" [value]="b.id">{{b.meat_name}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label" for="productFilter">Productos</label>
+                      <select name="productFilter" [(ngModel)]="filterParams.productId" class="form-control form-control-alternative">
+                        <option *ngFor="let b of _productsFilter" class="dropdown-item" [value]="b.id">{{b.description}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 text-right">
+                    <br><br>
+                    <button type="submit" class="btn btn-sm btn-primary" >
+                      <i _ngcontent-usi-c107="" class="fa fa-search"></i>
+                      Buscar
+                    </button>
+                    <button class="btn btn-sm btn-default" (click)="visibleFilters=false">
+                      <span aria-hidden="true">&times;</span>
+                      Cerrar</button>
+                  </div>
+                </div>
+
+            </form>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Producto</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Capturar Kilos</th>
+                <th scope="col">Capturar Piezas</th>
+                <th scope="col">Capturar Cajas</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr *ngFor="let io of products">
+                <!-- aqui hay que poner el id del regitrso como oculto <app-child [childMessage]="parentMessage"></app-child> -->
+                <td>
+                  <span class="mb-0 text-sm">{{io.description}}</span>
+                </td>
+                <td>
+                  <span class="mb-0 text-sm">{{findMeatType(io.meat_typeId)}}</span>
+                </td>
+                <td>
+                  <span class="mb-0 text-sm">{{io.price}}</span>
+                </td>
+                <td>
+                  <span class="mb-0 text-sm">{{io.by_kilograms=="Y"?"SI":"NO"}}</span>
+                </td>
+                <td>
+                  <span class="mb-0 text-sm">{{io.by_pieces=="Y"?"SI":"NO"}}</span>
+                </td>
+                <td>
+                  <span class="mb-0 text-sm">{{io.by_boxes=="Y"?"SI":"NO"}}</span>
+                </td>
+                <td class="text-right">
+                  <div ngbDropdown placement="bottom-right">
+                    <a class="btn btn-sm btn-icon-only text-light"  ngbDropdownToggle>
+                      <i class="fas fa-ellipsis-v"></i>
+                    </a>
+                    <div ngbDropdownMenu class=" dropdown-menu-right dropdown-menu-arrow">
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="setUpdateProductId(io.id)">Modificar</a>
+                      <a class="dropdown-item" href="javascript:void(0)" (click)="deleteProduct(io.id)">Eliminar</a>
+                      <!-- <a class="dropdown-item" href="javascript:void(0)" (click)="asignarSucursalDestino(io.id)" *ngIf="io.type == 'O'" [routerLink]="['/update-product-sent']">Sucursal Destino</a> -->
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4">
+          <nav aria-label="...">
+            <ul class="pagination justify-content-end mb-0">
+              <li [class]="previousPageClass()">
+                <a class="page-link" href="javascript:void(0)" tabindex="-1" (click)="previousPage()">
+                  <i class="fas fa-angle-left"></i>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              <!-- <li class="page-item active">
+                <a class="page-link" href="javascript:void(0)">1</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="javascript:void(0)">2 <span class="sr-only">(current)</span></a>
+              </li> -->
+              <li [class]="pageClass(numPage)" *ngFor="let numPage of pages"><a class="page-link" href="javascript:void(0)" (click)="changePage(numPage)">{{numPage}}</a></li>
+              <li [class]="nextPageClass()">
+                <a class="page-link" href="javascript:void(0)" (click)="nextPage()">
+                  <i class="fas fa-angle-right"></i>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-update-branches [productId]="productId" *ngIf="visibleUpdProduct==true" (messageEvent)="receiveMessage($event)"></app-update-branches>
+  <app-insert-products *ngIf="visibleInsProduct==true" (messageEvent)="receiveMessage($event)"></app-insert-products>
+</div>
+

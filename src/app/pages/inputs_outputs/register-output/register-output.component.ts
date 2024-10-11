@@ -109,7 +109,7 @@ export class RegisterOutputComponent implements OnInit {
       let branchNoOne : Branch = {
         id: 0,
         name: "-Ninguno-",
-        adress: "",
+        address: "",
         is_deleted: "N",
         is_warehouse: "N"
       };

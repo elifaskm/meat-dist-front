@@ -1,0 +1,137 @@
+<!-- <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" >
+
+  <span class="mask bg-gradient-danger opacity-8"></span>
+
+  <div class="container-fluid d-flex align-items-center">
+
+  </div>
+</div> -->
+<div class="container-fluid mt-20">
+  <div class="row">
+    <!-- <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+
+      <br>
+      <app-kg-by-boxes [product]="product" *ngIf="product.by_boxes=='Y'" (newKgEvent)="updateKgByBoxes($event)"></app-kg-by-boxes>
+    </div> -->
+
+    <div class="col-xl-8 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Agregar producto</h3>
+            </div>
+            <div class="col-4 text-right">
+              <a class="btn btn-sm btn-outline-secondary" (click)="sendMessage(false)" >
+                <i _ngcontent-usi-c107="" class="fa fa-arrow-left"></i>
+                Regresar a la lista
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <form novalidate (ngSubmit)="onSubmit(f)" #f="ngForm" >
+            <h6 class="heading-small text-muted mb-4">INFORMACION</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="name">Descripción</label>
+                    <input type="text" required="required" [(ngModel)]="product.description" name="description" id="description" class="form-control form-control-alternative" placeholder="" value="" >
+                    <span *ngIf="noValidName" class="form-text text-danger">
+                      {{noValidNameMsg}}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="meat_type">Tipo</label>
+                    <select [(ngModel)]="product.meat_typeId" name="meat_type" id="meat_type" class="form-control form-control-alternative">
+                      <option *ngFor="let mt of meat_types" class="dropdown-item" [value]="mt.id">{{mt.meat_name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="price">Precio</label>
+                    <input type="number" required="required" min="0.1" [(ngModel)]="product.price" name="price" id="price" class="form-control form-control-alternative" placeholder="" value="" >
+                    <span *ngIf="noValidPrice" class="form-text text-danger">
+                      {{noValidPriceMsg}}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="by_kilograms">Capturar Kilos</label>
+                    <select [(ngModel)]="product.by_kilograms" name="by_kilograms" id="by_kilograms" class="form-control form-control-alternative">
+                      <option class="dropdown-item" value="Y" selected>SI</option>
+                      <option class="dropdown-item" value="N">NO</option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="by_pieces">Capturar Piezas</label>
+                    <select [(ngModel)]="product.by_pieces" name="by_pieces" id="by_pieces" class="form-control form-control-alternative">
+                      <option class="dropdown-item" value="Y" >SI</option>
+                      <option class="dropdown-item" value="N" selected>NO</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="by_boxes">Capturar Cajas</label>
+                    <select [(ngModel)]="product.by_boxes" name="by_boxes" id="by_boxes" class="form-control form-control-alternative" (change)="enableKgPorCajaControl($event.target.value)">
+                      <option class="dropdown-item" value="Y" >SI</option>
+                      <option class="dropdown-item" value="N" selected>NO</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="calc_by">Calcular por</label>
+                    <select [(ngModel)]="product.calc_by" name="calc_by" id="calc_by" class="form-control form-control-alternative" >
+                      <option class="dropdown-item" value="K" selected>Kilos</option>
+                      <option class="dropdown-item" value="P" >Piezas</option>
+                      <option class="dropdown-item" value="B" >Cajas</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="kg_by_boxes">Kilos x Caja</label>
+                    <input type="number" [(ngModel)]="product.kg_by_boxes" name="kg_x_boxes" id="kg_by_boxes" class="form-control form-control-alternative" placeholder="" value=""  [disabled]="disabledKgByBoxes">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6">
+
+                </div>
+                <div class="col-lg-6 text-right mt-5">
+                  <button type="submit" class="btn btn-sm btn-primary" >
+                    <i _ngcontent-usi-c107="" class="fa fa-save"></i>
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

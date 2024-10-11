@@ -1,0 +1,123 @@
+<div class="header bg-gradient-danger pb-1 pt-5 pt-md-8">
+  <div class="container-fluid">
+    <div class="header-body">
+
+    </div>
+  </div>
+</div>
+<div class="container-fluid mt-20">
+  <div class="row">
+    <!-- <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+
+      <br>
+      <app-kg-by-boxes [product]="product" *ngIf="product.by_boxes=='Y'" (newKgEvent)="updateKgByBoxes($event)"></app-kg-by-boxes>
+    </div> -->
+
+    <div class="col-xl-8 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h4 class="mb-0">Semáforo</h4>
+            </div>
+            <div class="col-4 text-right">
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <form novalidate (ngSubmit)="onSubmit(f)" #f="ngForm" >
+            <!-- <h6 class="heading-small text-muted mb-4">SEMAFORO</h6> -->
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-4 text-right ">
+                  <div class="form-group">
+                    <label class="form-control-label text-success" >VERDE</label>
+                  </div>
+                </div>
+                <div class="col-lg-2 text-center">
+                  <div class="form-group">
+                    <label class="form-control-label " >menor o igual a</label>
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input type="number" [(ngModel)]="objSemaphore.green.lessthanorequal" name="green" id="green" class="form-control form-control-alternative" placeholder="" value="" >
+                    <span *ngIf="noValidSemaphoreGreen" class="form-text text-danger">
+                      {{noValidSemaphoreGreenMsg}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-4 text-right ">
+                  <div class="form-group">
+                    <label class="form-control-label text-yellow " >AMARILLO</label>
+                  </div>
+                </div>
+                <div class="col-lg-2 text-center">
+                  <div class="form-group">
+                    <label class="form-control-label " >mayor a</label>
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input type="number" [(ngModel)]="objSemaphore.yellow.greaterthan" name="yellowMayor" id="yellowMayor" class="form-control form-control-alternative" placeholder="" value="" >
+                    <span *ngIf="noValidSemaphoreYellow" class="form-text text-danger">
+                      {{noValidSemaphoreYellowMsg}}
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-2 text-center">
+                  <div class="form-group">
+                    <label class="form-control-label " >y menor a</label>
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input type="number" [(ngModel)]="objSemaphore.yellow.lessthan" name="yellowMinor" id="yellowMinor" class="form-control form-control-alternative" placeholder="" value="" >
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-4 text-right ">
+                  <div class="form-group">
+                    <label class="form-control-label text-danger " >ROJO</label>
+                  </div>
+                </div>
+                <div class="col-lg-2 text-center">
+                  <div class="form-group">
+                    <label class="form-control-label " >mayor o igual a</label>
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <div class="form-group">
+                    <input type="number" [(ngModel)]="objSemaphore.red.greaterthanorequal" name="red" id="red" class="form-control form-control-alternative" placeholder="" value="" >
+                    <span *ngIf="noValidSemaphoreRed" class="form-text text-danger">
+                      {{noValidSemaphoreRedMsg}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+
+                </div>
+                <div class="col-lg-6 text-right mt-5">
+                  <button type="submit" class="btn btn-sm btn-primary" >
+                    <i _ngcontent-usi-c107="" class="fa fa-save"></i>
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

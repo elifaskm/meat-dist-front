@@ -210,5 +210,11 @@ export class HttpService{
     return this._http.delete(this.baseUrl + "/productsent/");
   }
 
+  public patchConfiguration(id: number, body: any){
+    console.log(body);
+    console.log(id);
+    return this._http.patch(this.baseUrl + "/configuration/"+id.toString(), body);
+  }
+
 
 }

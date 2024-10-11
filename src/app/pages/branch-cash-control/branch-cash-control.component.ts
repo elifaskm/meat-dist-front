@@ -86,7 +86,7 @@ export class BranchCashControlComponent implements OnInit {
       let allItem : Branch = {
         id: 0,
         name: "-- Todas --",
-        adress: "",
+        address: "",
         is_deleted: "N",
         is_warehouse: "N",
       }

@@ -24,6 +24,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BranchCashControlComponent } from '../../pages/branch-cash-control/branch-cash-control.component';
 import { ProductSentsComponent } from '../../pages/product_sents/product_sents.component';
 import { ResidueOfBranchComponent } from '../../pages/reportes/residue-of-branch/residue-of-branch.component';
+import { BranchesComponent } from '../../pages/catalogs/branches/branches.component';
+import { UpdateBranchesComponent } from './../../pages/catalogs/branches/update-branches/update-branches.component';
+import { CatalogsComponent } from '../../pages/catalogs/catalogs.component';
+import { InsertBranchesComponent } from './../../pages/catalogs/branches/insert-branches/insert-branches.component';
+import { UpdateProductsComponent } from './../../pages/catalogs/products/update-products/update-products.component';
+import { InsertProductsComponent } from './../../pages/catalogs/products/insert-products/insert-products.component';
+import { ProductsComponent } from '../../pages/catalogs/products/products.component';
+import { ConfigurationComponent } from '../../pages/configuration/configuration.component';
 
 
 @NgModule({
@@ -52,7 +60,15 @@ import { ResidueOfBranchComponent } from '../../pages/reportes/residue-of-branch
     BranchCashControlComponent,
     ProductSentsComponent,
     UpdateProductSentComponent,
-    ResidueOfBranchComponent
+    ResidueOfBranchComponent,
+    BranchesComponent,
+    UpdateBranchesComponent,
+    CatalogsComponent,
+    InsertBranchesComponent,
+    UpdateProductsComponent,
+    InsertProductsComponent,
+    ProductsComponent,
+    ConfigurationComponent
   ]
 })
 

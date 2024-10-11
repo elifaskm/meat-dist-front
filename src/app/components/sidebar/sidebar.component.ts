@@ -13,6 +13,8 @@ export const ROUTES: RouteInfo[] = [
     { path: '/product_sent', title: 'Productos Enviados a Sucursal',  icon:'ni-send text-yellow', class: '' },
     { path: '/branch-cash-control', title: 'Control de Inventario en Sucursales',  icon:'ni-money-coins text-green', class: '' },
     { path: '/reportes', title: 'Reportes',  icon:'ni-archive-2 text-info', class: '' },
+    { path: '/catalogs', title: 'Catálogos',  icon:'ni-collection text-warning', class: '' },
+    { path: '/configuration', title: 'Configuración',  icon:'ni-settings text-default', class: '' },
     { path: '/restart-db', title: 'Reiniciar Base de Datos',  icon:'ni-curved-next text-warning', class: '' },
     //{ path: '/icons', title: 'Icons',  icon:'ni-planet text-blue', class: '' },
     //{ path: '/maps', title: 'Maps',  icon:'ni-pin-3 text-orange', class: '' },
