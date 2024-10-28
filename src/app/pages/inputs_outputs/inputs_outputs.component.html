@@ -19,6 +19,9 @@
               <a routerLinkActive="active" [routerLink]="['/register-output']" class="btn btn-sm bg-warning">
                 Registrar salida
               </a>
+              <a routerLinkActive="active" class="btn btn-sm bg-info" (click)="cargarSalidasDesdeExcel()">
+                Cargar salidas desde excel
+              </a>
             </div>
           </div>
           <div class="row" *ngIf="visibleFilters==true">

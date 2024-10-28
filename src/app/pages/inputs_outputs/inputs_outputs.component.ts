@@ -206,8 +206,89 @@ export class InputsOutputsComponent implements OnInit {
     });
   }
 
+  forzarCargaSalidasDesdeExcel(){
+    Swal.fire({
+      title: "Se encontraron datos con información similar",
+      text: "¿Desea realizar la carga de cualquier forma?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, proceder"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._httpService.postLoadOutputs(true).subscribe((resp: any) => {
+
+          if(resp.msg == "OK"){
+            Swal.fire({
+              title: "¡Listo!",
+              text: "Los datos han sido cargados.",
+              icon: "success"
+            });
+            this.findInputsOutputs();
+          }else{
+            Swal.fire({
+              position: 'top-end',
+              icon: 'error',
+              title: 'Error',
+              html: resp.msg,
+              showConfirmButton: false,
+              timer: 2000
+            });
+          }
+
+        });
+
+
+      }
+    });
+  }
+
+  cargarSalidasDesdeExcel(){
+    Swal.fire({
+      title: "¿Está seguro de realizar la carga masiva?",
+      text: "",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, adelante"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._httpService.postLoadOutputs(false).subscribe((resp: any) => {
+
+          if(resp.msg == "OK"){
+            Swal.fire({
+              title: "¡Listo!",
+              text: "Los datos han sido cargados.",
+              icon: "success"
+            });
+            this.findInputsOutputs();
+          }else{
+            if(resp.msg == "output exists"){
+              this.forzarCargaSalidasDesdeExcel();
+            }else{
+              Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error',
+                html: resp.msg,
+                showConfirmButton: false,
+                timer: 2000
+              });
+            }
+          }
+
+        });
+
+
+      }
+    });
+  }
+
   asignarSucursalDestino(id:number): void{
     let obj=new Object();
+
     this._branchHttpService.getProductSentToBranch(id).subscribe((prodSent: ProductSent) => {
       if(prodSent){
         this._producSent = prodSent;
@@ -369,5 +450,7 @@ export class InputsOutputsComponent implements OnInit {
     //   Swal.fire(`You selected: ${fruit}`);
     // }
   }
+
+
 
 }

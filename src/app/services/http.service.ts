@@ -18,6 +18,7 @@ import { RepStockResidue } from '../models/rep_stock_residue';
 
 export class HttpService{
   private baseUrl: string = environment.BASE_API_URL;
+  private urlGDriveApi: string = environment.API_GDRIVE_URL;
 
   constructor(private readonly _http: HttpClient){
 
@@ -211,9 +212,11 @@ export class HttpService{
   }
 
   public patchConfiguration(id: number, body: any){
-    console.log(body);
-    console.log(id);
     return this._http.patch(this.baseUrl + "/configuration/"+id.toString(), body);
+  }
+
+  public postLoadOutputs(force: boolean){
+    return this._http.post(this.urlGDriveApi + "/GDriveFiles", {force:force});
   }
 
 
